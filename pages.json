@@ -78,7 +78,23 @@
 		        }
 		    }
 		}
-	],
+	    ,{
+            "path" : "pages/userinfo/userinfo",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/myRechange/userinfoSwitchCity/userinfoSwitchCity",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/myRechange/settings/settings",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/myRechange/updatePassword/updatePassword",
+            "style" : {}
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "充电Demo",
@@ -117,7 +133,7 @@
 	            "pagePath" : "pages/rechangeRecord/rechangeRecord",
 	            // "iconPath" : "static/template.png",
 	            // "selectedIconPath" : "static/templateHL.png",
-	            "text" : "充值记录"
+	            "text" : "充电记录"
 	        },
 			{
 			    "pagePath" : "pages/myRechange/myRechange",

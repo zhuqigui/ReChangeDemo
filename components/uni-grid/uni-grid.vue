@@ -1,7 +1,7 @@
 <template>
 	<view :class="{'uni-grid-no-border':!showBorder,'uni-grid-no-out-border':showBorder && !showOutBorder}" class="uni-grid">
 		<view v-for="(items,i) in gridGroup" :key="i" class="uni-grid__flex">
-			<view v-for="(item,index) in items" :hover-start-time="20" :hover-stay-time="70" :key="index" :class="[index == columnNum ? 'uni-grid-item-last' : '','uni-grid-item-' + type]" :style="{visibility:item.seize ? 'hidden' : 'inherit'}" class="uni-grid-item" hover-class="uni-grid-item-hover" @click="onClick(i,index)">
+			<view  v-for="(item,index) in items" :hover-start-time="20" :hover-stay-time="70" :key="index" :class="[index == columnNum ? 'uni-grid-item-last' : '','uni-grid-item-' + type]" :style="{visibility:item.seize ? 'hidden' : 'inherit'}" class="uni-grid-item" hover-class="uni-grid-item-hover" @click="onClick(i,index)">
 				<view v-if="!item.seize" class="uni-grid-item__content">
 					<image :src="item.image" class="uni-grid-item-image" />
 					<text class="uni-grid-item-text">{{ item.text }}</text>
@@ -36,6 +36,10 @@
 			showBorder: { // 是否显示border，如果为false，showOutBorder无效
 				type: Boolean,
 				default: true
+			},
+			showSelected:{//是否选中，选中的话改变背景为绿色，未选中显示为原色
+				type:Boolean,
+				default:false
 			}
 		},
 		data() {
@@ -71,9 +75,15 @@
 		},
 		methods: {
 			onClick(index, num) {
+				console.log("index=="+index+",this.columnNumber=="+this.columnNumber);
+				/**
+				 * 0 1,0 2,0 3
+				 * 1 1,1 2,1 3 
+				 */
 				this.$emit('click', {
 					index: index * this.columnNumber + num
 				})
+				this.showSelected=true;
 			}
 		}
 	}
@@ -99,7 +109,9 @@
 		flex-direction: column;
 		flex: 1
 	}
-
+	.uni-grid-item:focus{
+		background-color: green
+	}
 	.uni-grid-item:before {
 		display: block;
 		content: " ";
@@ -144,7 +156,7 @@
 	}
 
 	.uni-grid-item-hover {
-		background-color: #f1f1f1
+		background-color: green
 	}
 
 	.uni-grid-item-image {
