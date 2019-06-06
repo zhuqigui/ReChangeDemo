@@ -9,7 +9,7 @@
 			<view>></view>
 		</view>
 		<!--我的钱包-->
-		<view class="uni-flex uni-row uni-list-cell body-moneybox" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="togglePopup('bottom-share')">
+		<view class="uni-flex uni-row uni-list-cell body-moneybox" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoMyMoneyBox">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
 				<image class="body-moneybox-image" src="../../static/logo.png"></image>
 				<text class="body-moneybox-title">我的钱包</text>
@@ -17,7 +17,7 @@
 			<view>></view>
 		</view>
 		<!--优惠券-->
-		<view class="uni-flex uni-row uni-list-cell body-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="togglePopup('bottom-share')">
+		<view class="uni-flex uni-row uni-list-cell body-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoDiscountCoupon">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
 				<image class="body-moneybox-image" src="../../static/logo.png"></image>
 				<text class="body-moneybox-title">优惠券</text>
@@ -33,7 +33,7 @@
 			<view>></view>
 		</view>
 		<!--意见反馈-->
-		<view class="uni-flex uni-row uni-list-cell body-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="togglePopup('bottom-share')">
+		<view class="uni-flex uni-row uni-list-cell body-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoFeedback">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
 				<image class="body-moneybox-image" src="../../static/logo.png"></image>
 				<text class="body-moneybox-title">意见反馈</text>
@@ -41,7 +41,7 @@
 			<view>></view>
 		</view>
 		<!--关于小绿人-->
-		<view class="uni-flex uni-row uni-list-cell body-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="togglePopup('bottom-share')">
+		<view class="uni-flex uni-row uni-list-cell body-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoAboutMe">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
 				<image class="body-moneybox-image" src="../../static/logo.png"></image>
 				<text class="body-moneybox-title">关于小绿人</text>
@@ -49,7 +49,7 @@
 			<view>></view>
 		</view>
 		<!--附近站点-->
-		<view class="uni-flex uni-row uni-list-cell body-moneybox" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="togglePopup('bottom-share')">
+		<view class="uni-flex uni-row uni-list-cell body-moneybox" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoNearSite">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
 				<image class="body-moneybox-image" src="../../static/logo.png"></image>
 				<text class="body-moneybox-title">附近站点</text>
@@ -77,7 +77,31 @@
 					url:"/pages/myRechange/settings/settings"
 				})
 			},
-			
+			gotoMyMoneyBox:function(){
+				uni.navigateTo({
+					url:"/pages/myRechange/myMoneyBox/myMoneyBox"
+				})
+			},
+			gotoDiscountCoupon:function(){
+				uni.navigateTo({
+					url:"/pages/myRechange/discountCoupon/discountCoupon"
+				})
+			},
+			gotoFeedback:function(){
+				uni.navigateTo({
+					url:"/pages/myRechange/feedback/feedback"
+				})
+			},
+			gotoAboutMe:function(){
+				uni.navigateTo({
+					url:"/pages/myRechange/aboutMe/aboutMe"
+				})
+			},
+			gotoNearSite:function(){
+				uni.navigateTo({
+					url:"/pages/myRechange/nearSite/nearSite"
+				})
+			}
 		},
 		onHide() {
 			console.log("onHide setNavigationBarTitle to null...");

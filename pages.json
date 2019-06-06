@@ -94,6 +94,33 @@
             "path" : "pages/myRechange/updatePassword/updatePassword",
             "style" : {}
         }
+        ,{
+            "path" : "pages/myRechange/myMoneyBox/myMoneyBox",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/myRechange/discountCoupon/discountCoupon",
+            "style" : {
+				"navigationBarTitleText": "优惠券",
+                "enablePullDownRefresh": true
+			}
+        }
+        ,{
+            "path" : "pages/myRechange/feedback/feedback",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/myRechange/aboutMe/aboutMe",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/myRechange/userDocs/userDocs",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/myRechange/nearSite/nearSite",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

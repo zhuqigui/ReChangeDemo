@@ -3,7 +3,7 @@
 		<!--老密码-->
 		<view class="uni-flex uni-row " style="justify-content: space-between;">
 			<view class="head">老密码</view>
-			<input class="head head_right" type="text" maxlength="20" password="true"></input>
+			<input class="head head_right" @input="onKeyInput"  type="text" maxlength="20" password="true"></input>
 		</view>
 		<!--新密码-->
 		<view class="uni-flex uni-row " style="justify-content: space-between;">
@@ -26,9 +26,20 @@
 			}
 		},
 		methods: {
+			onKeyInput: function(event) {
+				this.inputValue = event.target.value
+			},
 			btnCommit:function(e){
-				console.log("存储新密码password..."+this.password);
-				uni.setStorageSync("password",this.password);
+				//判断老密码是否正确
+				var oldPassword=uni.getStorageSync("password");
+				if(this.inputValue==oldPassword){
+					console.log("存储新密码password..."+this.password);
+					uni.setStorageSync("password",this.password);
+				}else{
+					uni.showModal({
+						title:"老密码输入错误"
+					})
+				}
 			}
 		},
 		onLoad() {
