@@ -1,4 +1,4 @@
-# RechangeDemo1
+# RechangeDemo
 
 这是一个使用uni-app开发的仿小绿人充电的跨端应用，目前已经在微信小程序和android端可以正常运行
 还有很多功能待完善，喜欢的同学可以一起弄...
