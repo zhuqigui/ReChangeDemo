@@ -69,7 +69,7 @@
 		methods: {
 			gotoUserinfo:function(){
 				uni.navigateTo({
-					url:"/pages/userinfo/userinfo?phonenumber=12345678987&cityname=深圳"
+					url:"/pages/myRechange/userinfo/userinfo?phonenumber=12345678987&cityname=深圳"
 				})
 			},
 			gotoSettings:function(){

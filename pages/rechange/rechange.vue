@@ -258,6 +258,15 @@
 				console.log("this.hour=="+this.hour+",this.mintue=="+this.mintue);
 			    // this.day = this.days[val[2]]
 			}
+		},
+		onLoad() {
+			console.log("onLoad");
+			uni.login({
+				  provider: 'weixin',
+				  success: function (loginRes) {
+					console.log("loginRes.authResult=="+loginRes.authResult);
+				}
+});
 		}
 	}
 </script>

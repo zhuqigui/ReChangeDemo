@@ -29,7 +29,7 @@
 		methods: {
 			gotoCityList(){
 				uni.navigateTo({
-					url:"/pages/myRechange/userinfoSwitchCity/userinfoSwitchCity"
+					url:"/pages/myRechange/userinfoSwitchCity/userinfoSwitchCity?cityname="+this.cityname
 				})
 			}
 		},

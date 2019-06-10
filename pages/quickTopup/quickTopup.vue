@@ -9,15 +9,15 @@
 		<view>
 			<view class="bottom_warning">充值金额</view>
 			<view class="bottom-content-box">
-				<button class="mini-btn" type="primary" plain="true">5元</button>
-				<button class="mini-btn" type="primary" plain="true">20元</button>
-				<button class="mini-btn" type="primary" plain="true">50元</button>
+				<button class="mini-btn" v-bind:type="isFivePrimary?'primary':'default'" plain="true" v-on:click="selectFiveYuan">5元</button>
+				<button class="mini-btn" v-bind:type="isTwentyPrimary?'primary':'default'" v-on:click="selectTwentyYuan"  plain="true">20元</button>
+				<button class="mini-btn" v-bind:type="isFiftyPrimary?'primary':'default'" v-on:click="selectFiftyYuan()" plain="true">50元</button>
 			</view>
 			<view class="bottom-content-box">
-				<button class="mini-btn" type="primary" plain="true">100元</button>
-				<button class="mini-btn" type="primary" plain="true">200元</button>
+				<button class="mini-btn" v-bind:type="isOneHundredPrimary?'primary':'default'" v-on:click="selectOneHundredYuan()" plain="true">100元</button>
+				<button class="mini-btn" v-bind:type="isTwoHundredPrimary?'primary':'default'" v-on:click="selectTwoHundredYuan()" plain="true">200元</button>
 				<!--style="font-size: 28upx;" class="uni-input"-->
-				<button class="mini-btn" type="primary" plain="true">
+				<button class="mini-btn" v-bind:type="isOtherPrimary?'primary':'default'" v-on:click="selectOtherMoney()" plain="true">
 					<input style="height: 120upx;font-size: 36upx;" type="number" placeholder="其他金额" />
 				</button>
 			</view>
@@ -34,7 +34,13 @@
 	export default {
 		data() {
 			return {
-				showCurrentNumber: true
+				showCurrentNumber: true,
+				isFivePrimary:false,
+				isTwentyPrimary:false,
+				isFiftyPrimary:false,
+				isOneHundredPrimary:false,
+				isTwoHundredPrimary:false,
+				isOtherPrimary:false,
 			}
 		},
 		methods: {
@@ -49,7 +55,98 @@
 				// this.$mp.page.$getAppWebview().setStyle({
 				// 	softinputNavBar: 'auto'
 				// })
+			},
+			selectFiveYuan:function(){
+				//动态设置点击的按钮的类型变为primary
+				//this.$emit().
+				if(this.isFivePrimary){
+					this.isFivePrimary=false;
+				}else{
+					this.isFivePrimary=true;
+					//设置其他按钮为未选中状态
+					this.isTwentyPrimary=false,
+					this.isFiftyPrimary=false,
+					this.isOneHundredPrimary=false,
+					this.isTwoHundredPrimary=false,
+					this.isOtherPrimary=false
+				}
+			},
+			selectTwentyYuan:function(){
+				//动态设置点击的按钮的类型变为primary
+				//this.$emit().
+				if(this.isTwentyPrimary){
+					this.isTwentyPrimary=false;
+				}else{
+					this.isTwentyPrimary=true;
+					//设置其他按钮为未选中状态
+					this.isFivePrimary=false;
+					this.isFiftyPrimary=false,
+					this.isOneHundredPrimary=false,
+					this.isTwoHundredPrimary=false,
+					this.isOtherPrimary=false
+				}
+			},
+			selectFiftyYuan:function(){
+				//动态设置点击的按钮的类型变为primary
+				//this.$emit().
+				if(this.isFiftyPrimary){
+					this.isFiftyPrimary=false;
+				}else{
+					this.isFiftyPrimary=true;
+					//设置其他按钮为未选中状态
+					this.isFivePrimary=false;
+					this.isTwentyPrimary=false,
+					this.isOneHundredPrimary=false,
+					this.isTwoHundredPrimary=false,
+					this.isOtherPrimary=false
+				}
+			},
+			selectOneHundredYuan:function(){
+				//动态设置点击的按钮的类型变为primary
+				//this.$emit().
+				if(this.isOneHundredPrimary){
+					this.isOneHundredPrimary=false;
+				}else{
+					this.isOneHundredPrimary=true;
+					//设置其他按钮为未选中状态
+					this.isFivePrimary=false;
+					this.isTwentyPrimary=false,
+					this.isFiftyPrimary=false,
+					this.isTwoHundredPrimary=false,
+					this.isOtherPrimary=false
+				}
+			},
+			selectTwoHundredYuan:function(){
+				//动态设置点击的按钮的类型变为primary
+				//this.$emit().
+				if(this.isTwoHundredPrimary){
+					this.isTwoHundredPrimary=false;
+				}else{
+					this.isTwoHundredPrimary=true;
+					//设置其他按钮为未选中状态
+					this.isFivePrimary=false;
+					this.isTwentyPrimary=false;
+					this.isFiftyPrimary=false,
+					this.isOneHundredPrimary=false,
+					this.isOtherPrimary=false
+				}
+			},
+			selectOtherMoney:function(){
+				//动态设置点击的按钮的类型变为primary
+				//this.$emit().
+				if(this.isOtherPrimary){
+					this.isOtherPrimary=false;
+				}else{
+					this.isOtherPrimary=true;
+					//设置其他按钮为未选中状态
+					this.isFivePrimary=false;
+					this.isTwentyPrimary=false;
+					this.isFiftyPrimary=false,
+					this.isOneHundredPrimary=false,
+					this.isTwoHundredPrimary=false
+				}
 			}
+			
 		}
 	}
 </script>
@@ -78,6 +175,9 @@
 		.mini-btn {
 			width:30%;
 			margin-right: 15upx;
+		}
+		.primary{
+			
 		}
 		.btn_commit{
 			margin-top: 30upx;
