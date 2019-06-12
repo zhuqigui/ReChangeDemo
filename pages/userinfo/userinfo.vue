@@ -31,7 +31,8 @@
 				uni.navigateTo({
 					url:"/pages/myRechange/userinfoSwitchCity/userinfoSwitchCity"
 				})
-			}
+			},
+			
 		},
 		onLoad(e) {
 			uni.setNavigationBarTitle({

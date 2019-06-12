@@ -146,26 +146,26 @@
 	    "list" : [
 	        {
 	            "pagePath" : "pages/rechange/rechange",
-	            // "iconPath" : "static/component.png",
-	            // "selectedIconPath" : "static/componentHL.png",
+	             "iconPath" : "static/button-charge.png",
+	             "selectedIconPath" : "static/button-charge-click.png",
 	            "text" : "充电"
 	        },
 	        {
 	            "pagePath" : "pages/quickTopup/quickTopup",
-	            // "iconPath" : "static/api.png",
-	            // "selectedIconPath" : "static/apiHL.png",
+	             "iconPath" : "static/button-recharge.png",
+	             "selectedIconPath" : "static/button-recharge-click.png",
 	            "text" : "快速充值"
 	        },
 	        {
 	            "pagePath" : "pages/rechangeRecord/rechangeRecord",
-	            // "iconPath" : "static/template.png",
-	            // "selectedIconPath" : "static/templateHL.png",
+	            "iconPath" : "static/button-record.png",
+	            "selectedIconPath" : "static/button-record-click.png",
 	            "text" : "充电记录"
 	        },
 			{
 			    "pagePath" : "pages/myRechange/myRechange",
-			    // "iconPath" : "static/template.png",
-			    // "selectedIconPath" : "static/templateHL.png",
+			    "iconPath" : "static/button-my.png",
+			    "selectedIconPath" : "static/button-my-click.png",
 			    "text" : "我的充电"
 			}
 	    ]

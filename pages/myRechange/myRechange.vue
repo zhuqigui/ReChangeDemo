@@ -3,8 +3,8 @@
 		<!--头像及登录的账号-->
 		<view class="uni-flex uni-row uni-list-cell head" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoUserinfo">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
-				<image class="head-image" src="../../static/logo.png" style="border-radius: 50%;"></image>
-				<text class="head-phone-number">15889426542</text>
+				<image class="head-image" src="../../static/my.jpg" style="border-radius: 50%;"></image>
+				<text class="head-phone-number">{{username}}</text>
 			</view>
 			<view>></view>
 		</view>
@@ -35,7 +35,7 @@
 		<!--意见反馈-->
 		<view class="uni-flex uni-row uni-list-cell body-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoFeedback">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
-				<image class="body-moneybox-image" src="../../static/logo.png"></image>
+				<image class="body-moneybox-image" src="../../static/my-advice.png"></image>
 				<text class="body-moneybox-title">意见反馈</text>
 			</view>
 			<view>></view>
@@ -51,7 +51,7 @@
 		<!--附近站点-->
 		<view class="uni-flex uni-row uni-list-cell body-moneybox" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoNearSite">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
-				<image class="body-moneybox-image" src="../../static/logo.png"></image>
+				<image class="body-moneybox-image" src="../../static/map-select.png"></image>
 				<text class="body-moneybox-title">附近站点</text>
 			</view>
 			<view>></view>
@@ -63,7 +63,7 @@
 	export default {
 		data() {
 			return {
-				
+				username:''
 			}
 		},
 		methods: {
@@ -108,6 +108,9 @@
 			uni.setNavigationBarTitle({
 				title:''
 			})
+		},
+		onLoad() {
+			this.username=uni.getStorageSync("username");
 		}
 	}
 </script>
@@ -124,6 +127,7 @@
 	}
 	.head-phone-number{
 		font-size: 40upx;
+		margin-left: 20upx;
 		margin-bottom:30upx;
 /* 		margin-left: -50upx; */
 	}

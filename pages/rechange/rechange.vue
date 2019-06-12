@@ -58,7 +58,7 @@
 			</view>
 			<view class="bottom-btn" @click="togglePopup('')">如何识别电池类型</view>
 		</uni-popup>
-		<uni-popup :show="popupType === 'bottom-time'" position="bottom" @hidePopup="togglePopup('')" >
+		<uni-popup :show="popupType === 'bottom-time'" position="bottom" @hidePopup="hidechangeTimePopup" >
 			<view class="uni-flex uni-row" style="max-height: 60upx;">
 				<view class="uni-flex uni-column" style="flex: 1;">
 					<text style="flex: 1;display: flex; justify-content: center;align-items: center;font-size: 30upx;">请指定充电时长</text>
@@ -72,7 +72,7 @@
 				</picker-view-column>
 				<view class="charge_time_hour">时</view>
 				<picker-view-column>
-					<view class="item" v-for="(item,index) in minutes" :key="index">{{item}}</view>
+					<view class="item" v-for="(minute,index) in minutes" :key="index">{{minute}}</view>
 				</picker-view-column>
 				<view class="charge_time_hour">分</view>
 			</picker-view>
@@ -110,6 +110,8 @@
 				swiperGridWidth: '100%',
 				title: 'rechange',
 				result: '',
+				username:'',
+				hidechangeTimePopup:false,//隐藏充电时长弹出菜单
 				data3: [{
 						image: '/static/c1.png',
 						text: '空闲'
@@ -231,7 +233,10 @@
 			},
 			togglePopup:function(type){
 				console.log("togglePopup type.."+type);
-				this.popupType = type
+				if(type==''){
+					
+				}
+				this.popupType = type;
 				if(this.popupType==="bottom-share"){
 					
 				}else if(this.popupType==="bottom-time"){
@@ -242,7 +247,12 @@
 						this.charge_time_value=this.hour+'时'+this.mintue+'分>';
 					}
 					console.log("this.charge_time_value=="+this.charge_time_value);
+					//隐藏弹出框
+					//this.togglePopup('');
 				}
+			},
+			confirmRechangeTime:function(){
+				this.hidechangeTimePopup=true;
 			},
 			selectBattery:function(type){
 				this.selectBatteryType=type
@@ -256,7 +266,59 @@
 			    this.hour = this.hours[val[0]]
 			    this.mintue = this.minutes[val[1]]
 				console.log("this.hour=="+this.hour+",this.mintue=="+this.mintue);
+				if(this.hour==0 && this.mintue==0){
+					this.charge_time_value="充满即止不限时";
+				}else{
+					this.charge_time_value=this.hour+'时'+this.mintue+'分>';
+				}
+				console.log("this.charge_time_value=="+this.charge_time_value);
 			    // this.day = this.days[val[2]]
+			},
+			oauth() {//value
+			    uni.login({
+			        provider: 'weixin',//value'',
+			        success: (res) => {
+			            uni.getUserInfo({
+			                provider: 'weixin',//value,
+			                success: (infoRes) => {
+			                    /**
+			                     * 实际开发中，获取用户信息后，需要将信息上报至服务端。
+			                     * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
+			                     */
+			                    this.toMain(infoRes.userInfo.nickName);
+								//this.username=infoRes.userInfo.nickName;
+								uni.setStorageSync("username",infoRes.userInfo.nickName);
+								 console.log('微信授权登录成功：' +infoRes.userInfo.nickName);
+			                }
+			            });
+			        },
+			        fail: (err) => {
+			            console.error('授权登录失败：' + JSON.stringify(err));
+			        }
+			    });
+			},
+			toMain(userName) {
+			    //this.login(userName);
+			    /**
+			     * 强制登录时使用reLaunch方式跳转过来
+			     * 返回首页也使用reLaunch方式
+			     */
+			    if (this.forcedLogin) {
+			        uni.navigateTo({
+			            url: '/pages/myRechange/userinfoSwitchCity/userinfoSwitchCity?'+this.username, 
+			        });
+			    } else {
+			        uni.navigateBack();
+			    }
+			
+			}
+		},
+		onLoad() {
+			this.username=uni.getStorageSync("username");
+			console.log("onLoad username..."+this.username);
+			if(this.username==''){
+				console.log("onLoad username is null to oauth...");
+				this.oauth();
 			}
 		}
 	}
