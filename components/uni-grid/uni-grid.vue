@@ -3,7 +3,8 @@
 		<view v-for="(items,i) in gridGroup" :key="i" class="uni-grid__flex">
 			<view  v-for="(item,index) in items" :hover-start-time="20" :hover-stay-time="70" :key="index" :class="[index == columnNum ? 'uni-grid-item-last' : '','uni-grid-item-' + type]" :style="{visibility:item.seize ? 'hidden' : 'inherit'}" class="uni-grid-item" hover-class="uni-grid-item-hover" @click="onClick(i,index)">
 				<view v-if="!item.seize" class="uni-grid-item__content">
-					<image :src="item.image" class="uni-grid-item-image" />
+					<!-- <image :src="item.image" class="uni-grid-item-image" /> -->
+					<text class="uni-grid-item-text">{{ item.num }}</text>
 					<text class="uni-grid-item-text">{{ item.text }}</text>
 				</view>
 			</view>
@@ -68,14 +69,15 @@
 				}
 				groupItem = null
 				return group
+				
 			}
 		},
 		created() {
 			this.columnNumber = this.gridGroup[0].length
 		},
 		methods: {
-			onClick(index, num) {
-				console.log("index=="+index+",this.columnNumber=="+this.columnNumber);
+			onClick(index,num) {
+				console.log("index=="+index+",this.columnNumber=="+this.columnNumber+",num=="+num);
 				/**
 				 * 0 1,0 2,0 3
 				 * 1 1,1 2,1 3 
@@ -107,7 +109,10 @@
 		display: flex;
 		position: relative;
 		flex-direction: column;
-		flex: 1
+		text-align: center;
+		flex: 1;
+		height: 100upx;
+		
 	}
 	.uni-grid-item:focus{
 		background-color: green
@@ -151,8 +156,10 @@
 
 	.uni-grid-item-text {
 		font-size: 32upx;
-		color: #333;
-		margin-top: 12upx
+		color: #008000;
+		margin-top: 12upx;
+		height:40upx;
+		width: 80upx;
 	}
 
 	.uni-grid-item-hover {
@@ -161,7 +168,7 @@
 
 	.uni-grid-item-image {
 		width: 80upx;
-		height: 80upx
+		height: 40upx
 	}
 
 	.uni-grid .uni-grid__flex:first-child .uni-grid-item:after {
