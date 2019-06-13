@@ -11,7 +11,7 @@
 		<!--我的钱包-->
 		<view class="uni-flex uni-row uni-list-cell body-moneybox" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoMyMoneyBox">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
-				<image class="body-moneybox-image" src="../../static/logo.png"></image>
+				<image class="body-moneybox-image" src="../../static/mymoneybox.png"></image>
 				<text class="body-moneybox-title">我的钱包</text>
 			</view>
 			<view>></view>
@@ -19,7 +19,7 @@
 		<!--优惠券-->
 		<view class="uni-flex uni-row uni-list-cell body-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoDiscountCoupon">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
-				<image class="body-moneybox-image" src="../../static/logo.png"></image>
+				<image class="body-moneybox-image" src="../../static/discount_ponun.png"></image>
 				<text class="body-moneybox-title">优惠券</text>
 			</view>
 			<view>></view>
@@ -27,7 +27,7 @@
 		<!--设置-->
 		<view class="uni-flex uni-row uni-list-cell body-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoSettings">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
-				<image class="body-moneybox-image" src="../../static/logo.png"></image>
+				<image class="body-moneybox-image" src="../../static/settings.png"></image>
 				<text class="body-moneybox-title">设置</text>
 			</view>
 			<view>></view>
@@ -43,7 +43,7 @@
 		<!--关于小绿人-->
 		<view class="uni-flex uni-row uni-list-cell body-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoAboutMe">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
-				<image class="body-moneybox-image" src="../../static/logo.png"></image>
+				<image class="body-moneybox-image" src="../../static/about.png"></image>
 				<text class="body-moneybox-title">关于小绿人</text>
 			</view>
 			<view>></view>
@@ -51,7 +51,7 @@
 		<!--附近站点-->
 		<view class="uni-flex uni-row uni-list-cell body-moneybox" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoNearSite">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
-				<image class="body-moneybox-image" src="../../static/map-select.png"></image>
+				<image class="body-moneybox-image" src="../../static/navi.png"></image>
 				<text class="body-moneybox-title">附近站点</text>
 			</view>
 			<view>></view>
@@ -69,7 +69,7 @@
 		methods: {
 			gotoUserinfo:function(){
 				uni.navigateTo({
-					url:"/pages/userinfo/userinfo?phonenumber=12345678987&cityname=深圳"
+					url:"/pages/myRechange/userinfo/userinfo?phonenumber=12345678987&cityname=深圳"
 				})
 			},
 			gotoSettings:function(){

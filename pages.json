@@ -79,7 +79,7 @@
 		    }
 		}
 	    ,{
-            "path" : "pages/userinfo/userinfo",
+            "path" : "pages/myRechange/userinfo/userinfo",
             "style" : {}
         }
         ,{

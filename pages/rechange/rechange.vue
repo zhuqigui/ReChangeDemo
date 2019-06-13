@@ -7,13 +7,19 @@
 				<view class="head head_right" @click="qrcode" style="color: #007AFF;">切换扫码</view>
 			</view>
 			<!--显示编号-->
-			<view>
-				<text class="scan_result">扫  码  结  果{{result}}</text>
+			<view class="scan_result">
+				<!-- <text class="scan_result">扫  码  结  果{{result}}</text> -->
+				<text class="scan_result-item">5</text>
+				<text class="scan_result-item">5</text>
+				<text class="scan_result-item">5</text>
+				<text class="scan_result-item">5</text>
+				<text class="scan_result-item">5</text>
+				<text class="scan_result-item">5</text>
 			</view>
 			<!--6个充电口状态-->
 			<view class="page">
 				<view class="example">
-					<uni-grid :options="data3" :show-out-border="false" />
+					<uni-grid :options="data3" :show-out-border="false" @change="selectChangeNum" />
 				</view>
 			</view>
 			<!--电池类型-->
@@ -113,27 +119,33 @@
 				username:'',
 				hidechangeTimePopup:false,//隐藏充电时长弹出菜单
 				data3: [{
-						image: '/static/c1.png',
+						// image: '/static/c1.png',
+						num:'1',
 						text: '空闲'
 					},
 					{
-						image: '/static/c2.png',
+						// image: '/static/c2.png',
+						num:'2',
 						text: '空闲'
 					},
 					{
-						image: '/static/c3.png',
+						// image: '/static/c3.png',
+						num:'3',
 						text: '空闲'
 					},
 					{
-						image: '/static/c4.png',
+						// image: '/static/c4.png',
+						num:'4',
 						text: '空闲'
 					},
 					{
-						image: '/static/c5.png',
+						// image: '/static/c5.png',
+						num:'5',
 						text: '空闲'
 					},
 					{
-						image: '/static/c6.png',
+						// image: '/static/c6.png',
+						num:'6',
 						text: '空闲'
 					}
 				],
@@ -311,6 +323,10 @@
 			        uni.navigateBack();
 			    }
 			
+			},
+			selectChangeNum(e){
+				const val = e.detail.value
+				console.log("selectChangeNum val="+val);
 			}
 		},
 		onLoad() {
@@ -336,12 +352,17 @@ view {
 		line-height: inherit;
 }
 .scan_result{
+	position: relative;
+	display: flex;
+	flex-direction: row
+}
+.scan_result-item{
 	font-size: 62upx;
 	margin-bottom: 10upx;
 	padding: 10upx 0;
 	display: flex;
 	min-height: 10upx;
-	width: 100%;
+	width: 16%;
 	background-color: #FFFFFF;
 	justify-content: center;
 	align-items: center;
