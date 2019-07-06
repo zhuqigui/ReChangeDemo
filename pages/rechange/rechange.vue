@@ -49,20 +49,25 @@
 			<view class="bottom-title">请选择电池类型</view>
 			<!--弹出来的电池类型提示-->
 			<view class="uni-flex uni-row" style="justify-content: space-between;">
-				<view class="head">请选择与电池型号一致的充电器，以及损伤电池</view>
-				<view class="head head_right" @click="moreType">更多类型</view>
+				<view class="battery_type_dialog_head">请选择与电池型号一致的充电器，以及损伤电池</view>
+				<view class="battery_type_dialog_head_right" @click="moreType">更多类型</view>
 			</view>
 			<view class="bottom-content">
-				<view v-for="(item, index) in bottomData" :key="index" class="bottom-content-box">
-					<!-- <view :class="item.name" class="bottom-content-image">
-						<text class="icon">{{ item.icon }}</text>
-					</view>
-					* v-if="this.selectBatteryType=='selected' : background"
-					<view class="bottom-content-text">{{ item.text }}</view> -->
-					<button class="primary" @click="selectBattery('selected')">{{ item.text }}</button>
+				<view v-for="(item, index) in bottomData" :key="index" class="bottom-content-box" 
+				v-on:click="addClass(index)" v-bind:class="{battery_type_ischeck:index==batteryTypecurrent}">
+					<button class="battery_type_default" v-bind:class="{battery_type_ischeck:index==batteryTypecurrent}">{{ item.text }}</button>
 				</view>
 			</view>
-			<view class="bottom-btn" @click="togglePopup('')">如何识别电池类型</view>
+			<view class="bottom-btn" @click="showHowtoKnowBatteryType()">如何识别电池类型</view>
+			<!--如何识别电池类型页面-->
+			<view>
+				 <scroll-view :scroll-top="scrollTop" scroll-y="true" class="scroll-Y how_to_know_battery_type" @scrolltoupper="upper" @scrolltolower="lower"
+                @scroll="scroll" v-show="isShowHowtoKnowBatteryType">
+					<image src="../../static/how_to_know_battery_type1.png"></image>
+					<image src="../../static/how_to_know_battery_type2.png" style="margin-top: -40upx;"></image>
+					<image src="../../static/how_to_know_battery_type3.png" class="how_to_know_battery_type-image"></image>
+				</scroll-view>
+			</view>
 		</uni-popup>
 		<uni-popup :show="popupType === 'bottom-time'" position="bottom" @hidePopup="hidechangeTimePopup" >
 			<view class="uni-flex uni-row" style="max-height: 60upx;">
@@ -118,6 +123,7 @@
 				result: '',
 				username:'',
 				hidechangeTimePopup:false,//隐藏充电时长弹出菜单
+				isShowHowtoKnowBatteryType:false,//默认隐藏如何知道电池类型
 				data3: [{
 						// image: '/static/c1.png',
 						num:'1',
@@ -152,6 +158,7 @@
 				popupType: '',
 				selectBatteryType:'',
 				showSelected:false,
+				batteryTypecurrent:0,
 				bottomData: [{
 						text: '铅酸36V',
 						// icon: '\ue6a4',
@@ -189,6 +196,11 @@
 					},
 					{
 						text: '锂电72V',
+						// icon: '\ue618',
+						// name: 'more'
+					},
+					{
+						text: '磷酸铁锂60V',
 						// icon: '\ue618',
 						// name: 'more'
 					}
@@ -327,6 +339,17 @@
 			selectChangeNum(e){
 				const val = e.detail.value
 				console.log("selectChangeNum val="+val);
+			},
+			addClass:function(index){
+				this.batteryTypecurrent=index
+				console.log("addClass batteryTypecurrent="+this.batteryTypecurrent);
+			},
+			showHowtoKnowBatteryType:function(){
+				if(this.isShowHowtoKnowBatteryType){
+					this.isShowHowtoKnowBatteryType=false;
+				}else{
+					this.isShowHowtoKnowBatteryType=true;
+				}
 			}
 		},
 		onLoad() {
@@ -393,6 +416,21 @@ view {
 	margin-right:15upx;
 	font-size: 30upx;
 }
+.battery_type_dialog_head{
+		margin:15upx 10upx;
+		padding: 0 20upx;
+		/* background-color: #ebebeb; */
+		height: 70upx;
+		line-height: 70upx;
+		text-align: center;
+		font-size: 25upx;
+	}
+.battery_type_dialog_head_right{
+	right: 15upx;
+	margin-right:15upx;
+	font-size: 25upx;
+	color: #09BB07;
+}
 .bottom-title {
 		line-height: 60upx;
 		font-size: 24upx;
@@ -402,7 +440,7 @@ view {
 	.bottom-content {
 		display: flex;
 		flex-wrap: wrap;
-		padding: 0 35upx;
+		padding: 0 15upx;
 	}
 
 	.bottom-content-box {
@@ -410,13 +448,50 @@ view {
 		flex-direction: column;
 		align-items: center;
 		margin-bottom: 15upx;
-/* 		margin-right: 15upx; */
-		width: 25%;
+		width: 180upx;
 		height:100upx;
 		box-sizing: border-box;
-		font-size: 26upx;
+		text-align: center;
+		font-size: 20upx;
 	}
-
+	.battery_type_default  {
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
+		height: 100upx;
+		width: 170upx;
+		margin-left: 10upx;
+		text-align: justify;
+		type:primary;
+		plain:false;
+		class:mini-btn;
+		box-sizing: border-box;
+		font-size: 28upx;
+	}
+	.battery_type_ischeck  {
+		display: flex;
+		flex-wrap: nowrap;
+		background-color: green;
+		align-items: center;
+		height: 100upx;
+		width: 170upx;
+		margin-left: 10upx;
+		text-align: center;
+		type:primary;
+		plain:false;
+		class:mini-btn;
+		box-sizing: border-box;
+		font-size: 28upx;
+	}
+	.how_to_know_battery_type{
+		width: 100%;
+		height: 300upx;
+	}
+	.how_to_know_battery_type-image{
+		width: 100%;
+		height: 100upx;
+		margin-top: -40upx;
+	}
 	.bottom-content-image {
 		display: flex;
 		justify-content: center;
@@ -444,6 +519,7 @@ view {
 		height: 90upx;
 		line-height: 90upx;
 		border-top: 1px #f5f5f5 solid;
+		color: #007AFF;
 	}
 	.charge_time_confirm{
 		font-size: 36upx;
