@@ -2,10 +2,10 @@
 	<view :class="{'uni-grid-no-border':!showBorder,'uni-grid-no-out-border':showBorder && !showOutBorder}" class="uni-grid">
 		<view v-for="(items,i) in gridGroup" :key="i" class="uni-grid__flex">
 			<view  v-for="(item,index) in items" :hover-start-time="20" :hover-stay-time="70" :key="index" :class="[index == columnNum ? 'uni-grid-item-last' : '','uni-grid-item-' + type]" :style="{visibility:item.seize ? 'hidden' : 'inherit'}" class="uni-grid-item" hover-class="uni-grid-item-hover" @click="onClick(i,index)">
-				<view v-if="!item.seize" class="uni-grid-item__content">
+				<view v-if="!item.seize" class="uni-grid-item__content" v-bind:class="{uni_grid_item_content_selected:item.num== currentSelect}">
 					<!-- <image :src="item.image" class="uni-grid-item-image" /> -->
-					<text class="uni-grid-item-text">{{ item.num }}</text>
-					<text class="uni-grid-item-text">{{ item.text }}</text>
+					<text class="uni-grid-item-text" v-bind:class="{uni_grid_item_text_selected:item.num==currentSelect}">{{ item.num }}</text>
+					<text class="uni-grid-item-text" v-bind:class="{uni_grid_item_text_selected:item.num==currentSelect}">{{ item.text }}</text>
 				</view>
 			</view>
 		</view>
@@ -41,10 +41,12 @@
 			showSelected:{//是否选中，选中的话改变背景为绿色，未选中显示为原色
 				type:Boolean,
 				default:false
-			}
+			},
 		},
 		data() {
-			return {}
+			return {
+				currentSelect:0
+			}
 		},
 		computed: {
 			gridGroup() {
@@ -77,14 +79,22 @@
 		},
 		methods: {
 			onClick(index,num) {
-				console.log("index=="+index+",this.columnNumber=="+this.columnNumber+",num=="+num);
+				console.log("index=="+index+",this.currentSelect=="+this.currentSelect+",num=="+num);
 				/**
 				 * 0 1,0 2,0 3
 				 * 1 1,1 2,1 3 
 				 */
-				this.$emit('click', {
-					index: index * this.columnNumber + num
-				})
+				this.currentSelect=num+1;
+				if(index==1 && num==0){
+					this.currentSelect=4
+				}else if(index==1 && num==1){
+					this.currentSelect=5
+				}else if(index==1 && num==2){
+					this.currentSelect=6
+				}
+				// this.$emit('click', {
+				// 	index: index * this.columnNumber + num
+				// })
 				this.showSelected=true;
 			}
 		}
@@ -153,10 +163,29 @@
 		justify-content: center;
 		align-items: center
 	}
+	.uni_grid_item_content_selected {
+		position: absolute;
+		background-color: #09BB07; 
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center
+	}
 
 	.uni-grid-item-text {
 		font-size: 32upx;
 		color: #008000;
+		margin-top: 12upx;
+		height:40upx;
+		width: 80upx;
+	}
+	.uni_grid_item_text_selected {
+		font-size: 32upx;
+		color:#F7F7F7;
 		margin-top: 12upx;
 		height:40upx;
 		width: 80upx;
