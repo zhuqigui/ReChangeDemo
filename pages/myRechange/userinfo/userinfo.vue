@@ -87,13 +87,18 @@
 				this.showExitlogin=false;
 				this.showlogin=true;
 			}
-			if(e.cityname){
-				//this.phonenumber = e.phonenumber;
-				this.cityname=e.cityname;
-				console.log("onLoad this.phonenumber=="+this.phonenumber+",,this.cityname=="+this.cityname);
-			}
+			this.cityname=uni.getStorageSync("cityname");
+			console.log("userinfo page onLoad this.phonenumber=="+this.phonenumber+",,this.cityname=="+this.cityname);
+			// if(e.cityname){
+			// 	//this.phonenumber = e.phonenumber;
+			// 	this.cityname=e.cityname;
+			// 	console.log("onLoad this.phonenumber=="+this.phonenumber+",,this.cityname=="+this.cityname);
+			// }
+		},
+		onShow() {
+			this.cityname=uni.getStorageSync("cityname");
+			console.log("userinfo page onShow this.cityname..."+this.cityname);
 		}
-		
 	}
 </script>
 
