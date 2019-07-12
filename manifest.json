@@ -15,7 +15,9 @@
             "delay" : 0
         },
         "modules" : {
-            "Maps" : {}
+            "Maps" : {},
+            "Payment" : {},
+            "OAuth" : {}
         },
         /* 模块配置 */
         "distribute" : {
@@ -50,7 +52,12 @@
             "ios" : {},
             /* ios打包配置 */
             "sdkConfigs" : {
-                "oauth" : {}
+                "oauth" : {},
+                "payment" : {
+                    "weixin" : {
+                        "appid" : "wx3ae11bed6cbc2b64"
+                    }
+                }
             }
         }
     },
@@ -59,10 +66,12 @@
     /* 快应用特有相关 */
     "mp-weixin" : {
         /* 小程序特有相关 */
-        "appid" : "",
+        "appid" : "wx3ae11bed6cbc2b64",
         "setting" : {
-            "urlCheck" : false
+            "urlCheck" : false,
+            "es6" : true
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "permission" : {}
     }
 }

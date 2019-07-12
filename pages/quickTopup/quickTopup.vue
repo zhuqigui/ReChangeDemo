@@ -145,6 +145,15 @@
 					this.isOneHundredPrimary=false,
 					this.isTwoHundredPrimary=false
 				}
+			},
+			btnCommit:function(){
+				uni.requestPayment({
+					provider: '',
+					orderInfo: '',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
 			}
 			
 		}

@@ -8,13 +8,9 @@
 			</view>
 			<!--显示编号-->
 			<view class="scan_result">
-				<!-- <text class="scan_result">扫  码  结  果{{result}}</text> -->
-				<text class="scan_result-item">5</text>
-				<text class="scan_result-item">5</text>
-				<text class="scan_result-item">5</text>
-				<text class="scan_result-item">5</text>
-				<text class="scan_result-item">5</text>
-				<text class="scan_result-item">5</text>
+				<view class="scan_result-item">
+					{{result}}
+				</view>
 			</view>
 			<!--6个充电口状态-->
 			<view class="page">
@@ -26,7 +22,7 @@
 			<view class="uni-list">
 				<view class="uni-flex uni-row uni-list-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="togglePopup('bottom-share')">
 					<view class="head">电池类型</view>
-					<view class="head head_right">></view>
+					<view class="head head_right">{{battery_type_value}}</view>
 				</view>
 				<view class="uni-flex uni-row uni-list-cell " style="justify-content: space-between;" hover-class="uni-list-cell-hover">
 					<view class="head">收费标准</view>
@@ -42,7 +38,7 @@
 				</view>
 			</view>
 			<view>
-				<button class="btn_commit" :style="{background:showSelected ? 'green' : 'red'}" @click="btnCommit">提交</button>
+				<button class="btn_commit" @click="btnCommit">提交</button>
 			</view>
 		</view>
 		<uni-popup :show="popupType === 'bottom-share'" position="bottom" @hidePopup="togglePopup('')">
@@ -53,10 +49,16 @@
 				<view class="battery_type_dialog_head_right" @click="moreType">更多类型</view>
 			</view>
 			<view class="bottom-content">
-				<view v-for="(item, index) in bottomData" :key="index" class="bottom-content-box" 
-				v-on:click="addClass(index)" v-bind:class="{battery_type_ischeck:index==batteryTypecurrent}">
-					<button class="battery_type_default" v-bind:class="{battery_type_ischeck:index==batteryTypecurrent}">{{ item.text }}</button>
-				</view>
+				<scroll-view :scroll-top="scrollTop" scroll-y="true" class="scroll-Y" @scrolltoupper="upper" @scrolltolower="lower"
+				@scroll="scroll">
+					<view v-for="(item, index) in bottomData" :key="index" class="bottom-content-box scroll-view-item_H" 
+					 v-on:click="addClass(index)" v-bind:class="{battery_type_ischeck:index==batteryTypecurrent}">
+						<button class="battery_type_default" v-bind:class="{battery_type_ischeck:index==batteryTypecurrent}" @click="selectBattery(item.text)">{{ item.text }}</button>
+					</view>
+					<!-- <view>
+						<button class="battery_type_default scroll-view-item_H" v-on:click="addClass(9)" v-bind:class="{battery_type_ischeck:batteryTypecurrent==9}" @click="selectBattery('磷酸铁锂60V')">磷酸铁锂60V</button>
+					</view> -->
+				</scroll-view>
 			</view>
 			<view class="bottom-btn" @click="showHowtoKnowBatteryType()">如何识别电池类型</view>
 			<!--如何识别电池类型页面-->
@@ -198,12 +200,13 @@
 						text: '锂电72V',
 						// icon: '\ue618',
 						// name: 'more'
-					},
-					{
-						text: '磷酸铁锂60V',
-						// icon: '\ue618',
-						// name: 'more'
 					}
+					 ,
+					 {
+					 	text: '磷酸铁锂60V',
+					 	// icon: '\ue618',
+					 	// name: 'more'
+					 }
 				],
 				// years,
 				// year,
@@ -218,12 +221,17 @@
 				minutes:[0,30],
 				mintue,
 				value: [hour,mintue],
+				battery_type_value:'>',
 				charge_time_value:'>',
 				/**
 				 * 解决动态设置indicator-style不生效的问题
 				 */
 				visible: false,
-				indicatorStyle: `height: ${Math.round(uni.getSystemInfoSync().screenWidth/(750/100))}px;`
+				indicatorStyle: `height: ${Math.round(uni.getSystemInfoSync().screenWidth/(750/100))}px;`,
+				scrollTop: 0,
+				old: {
+					scrollTop: 0
+				}
 			}
 		},
 		methods: {
@@ -231,7 +239,10 @@
 				console.log("uni.scanCode....");
 				uni.scanCode({
 					success: (res) => {
-						this.result = res.result
+						//首先用字符串的split方法将字符串变成数组 在用数组的join方法将数组变成字符串中
+						this.result = res.result.split("").join("  ");
+						console.log("this.result=="+this.result);
+						//console.log(result.split("").join(" "));
 					}
 				});
 			},
@@ -278,8 +289,10 @@
 			confirmRechangeTime:function(){
 				this.hidechangeTimePopup=true;
 			},
-			selectBattery:function(type){
-				this.selectBatteryType=type
+			selectBattery:function(value){
+				this.battery_type_value=value+">";
+				this.togglePopup('');
+				
 			},
 			toggleTime:function(){
 				this.visible=true;
@@ -350,7 +363,11 @@
 				}else{
 					this.isShowHowtoKnowBatteryType=true;
 				}
-			}
+			},
+			scroll: function(e) {
+				console.log(e)
+				this.old.scrollTop = e.detail.scrollTop
+			},
 		},
 		onLoad() {
 			this.username=uni.getStorageSync("username");
@@ -385,7 +402,7 @@ view {
 	padding: 10upx 0;
 	display: flex;
 	min-height: 10upx;
-	width: 16%;
+	width: 100%;
 	background-color: #FFFFFF;
 	justify-content: center;
 	align-items: center;
@@ -446,6 +463,7 @@ view {
 	.bottom-content-box {
 		display: flex;
 		flex-direction: column;
+		flex-wrap: nowrap;
 		align-items: center;
 		margin-bottom: 15upx;
 		width: 180upx;
@@ -482,6 +500,19 @@ view {
 		class:mini-btn;
 		box-sizing: border-box;
 		font-size: 28upx;
+	}
+	.scroll-view_H {
+		white-space: nowrap;
+		width: 100%;
+		height: 200upx;
+	}
+	.scroll-view-item_H {
+		display: inline-block;
+/* 		width: 100%;
+		height: 100upx;
+		line-height: 100upx; */
+		text-align: center;
+		font-size: 36upx;
 	}
 	.how_to_know_battery_type{
 		width: 100%;
