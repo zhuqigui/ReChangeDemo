@@ -22,19 +22,19 @@
 			<view class="uni-list">
 				<view class="uni-flex uni-row uni-list-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="togglePopup('bottom-share')">
 					<view class="head">电池类型</view>
-					<view class="head head_right">{{battery_type_value}}</view>
+					<view class="head head_right">{{battery_type_value}}></view>
 				</view>
 				<view class="uni-flex uni-row uni-list-cell " style="justify-content: space-between;" hover-class="uni-list-cell-hover">
 					<view class="head">收费标准</view>
-					<view class="head head_right">-/-</view>
+					<view class="head head_right">{{battery_type_price}}元/小时</view>
 				</view>
 				<view class="uni-flex uni-row uni-list-cell" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="togglePopup('bottom-time')">
 					<view class="head">充电时长</view>
-					<view class="head head_right">{{charge_time_value}}</view>
+					<view class="head head_right">{{charge_time_value}}></view>
 				</view>
 				<view class="uni-flex uni-row" style="justify-content: space-between;">
 					<view class="head">账户余额</view>
-					<view class="head head_right">￥0</view>
+					<view class="head head_right">￥{{balance}}</view>
 				</view>
 			</view>
 			<view>
@@ -46,14 +46,14 @@
 			<!--弹出来的电池类型提示-->
 			<view class="uni-flex uni-row" style="justify-content: space-between;">
 				<view class="battery_type_dialog_head">请选择与电池型号一致的充电器，以及损伤电池</view>
-				<view class="battery_type_dialog_head_right" @click="moreType">更多类型</view>
+				<view class="battery_type_dialog_head_right" v-show="false" @click="moreType">更多类型</view>
 			</view>
 			<view class="bottom-content">
 				<scroll-view :scroll-top="scrollTop" scroll-y="true" class="scroll-Y" @scrolltoupper="upper" @scrolltolower="lower"
 				@scroll="scroll">
 					<view v-for="(item, index) in bottomData" :key="index" class="bottom-content-box scroll-view-item_H" 
 					 v-on:click="addClass(index)" v-bind:class="{battery_type_ischeck:index==batteryTypecurrent}">
-						<button class="battery_type_default" v-bind:class="{battery_type_ischeck:index==batteryTypecurrent}" @click="selectBattery(item.text)">{{ item.text }}</button>
+						<button class="battery_type_default" v-bind:class="{battery_type_ischeck:index==batteryTypecurrent}" @click="selectBattery(item)">{{ item.text }}</button>
 					</view>
 					<!-- <view>
 						<button class="battery_type_default scroll-view-item_H" v-on:click="addClass(9)" v-bind:class="{battery_type_ischeck:batteryTypecurrent==9}" @click="selectBattery('磷酸铁锂60V')">磷酸铁锂60V</button>
@@ -163,47 +163,56 @@
 				batteryTypecurrent:0,
 				bottomData: [{
 						text: '铅酸36V',
+						price:1,
 						// icon: '\ue6a4',
 						// name: 'wx'
 					},
 					{
 						text: '铅酸48V',
+						price:1.1,
 						// icon: '\ue646',
 						// name: 'wx'
 					},
 					{
 						text: '铅酸60V',
+						price:1.2,
 						// icon: '\ue66b',
 						// name: 'qq'
 					},
 					{
 						text: '铅酸72V',
+						price:1.3,
 						// icon: '\ue600',
 						// name: 'sina'
 					},
 					{
 						text: '锂电36V',
+						price:1.4,
 						// icon: '\ue632',
 						// name: 'copy'
 					},
 					{
 						text: '锂电48V',
+						price:1.5,
 						// icon: '\ue618',
 						// name: 'more'
 					},
 					{
 						text: '锂电60V',
+						price:1.6,
 						// icon: '\ue618',
 						// name: 'more'
 					},
 					{
 						text: '锂电72V',
+						price:1.7,
 						// icon: '\ue618',
 						// name: 'more'
 					}
 					 ,
 					 {
 					 	text: '磷酸铁锂60V',
+						price:1.8,
 					 	// icon: '\ue618',
 					 	// name: 'more'
 					 }
@@ -221,8 +230,14 @@
 				minutes:[0,30],
 				mintue,
 				value: [hour,mintue],
-				battery_type_value:'>',
-				charge_time_value:'>',
+				battery_type_value:'',
+				charge_time_value:'',
+				battery_type_price:0,//电池类型对应的价格
+				balance:100,//总余额
+				charge_time:0,//充电时间
+				spendMoney:0,//花费的金额
+				nextTodoId:1,//充电记录ID
+				changeRecordList:[],//充电记录列表id,batteryType,price
 				/**
 				 * 解决动态设置indicator-style不生效的问题
 				 */
@@ -247,8 +262,18 @@
 				});
 			},
 			btnCommit:function(){
-				console.log("btnCommit....");
 				this.showSelected=true;
+				//计算应该花费的金额
+				this.balance=this.balance-this.charge_time*this.battery_type_price;
+				console.log("btnCommit this.spendMoney.."+this.spendMoney+",this.charge_time="+this.charge_time
+				+",this.battery_type_price=="+this.battery_type_price);
+				//插入充电记录
+				this.changeRecordList.push({
+					id:this.nextTodoId++,
+					batteryType:this.battery_type_value,
+					price:this.charge_time*this.battery_type_price,
+				});
+				uni.setStorageSync("changeRecordList",this.changeRecordList);
 			},
 			selectItem:function(){
 				let tabBarOptions = {
@@ -278,10 +303,12 @@
 					console.log("popupType==bottom-time");
 					if(this.hour==0 && this.mintue==0){
 						this.charge_time_value="充满即止不限时";
+						this.charge_time=8;
 					}else{
-						this.charge_time_value=this.hour+'时'+this.mintue+'分>';
+						this.charge_time_value=this.hour+'时'+this.mintue+'分';
+						this.charge_time=this.hour+0.5;
 					}
-					console.log("this.charge_time_value=="+this.charge_time_value);
+					console.log("this.charge_time_value=="+this.charge_time_value+",this.charge_time=="+this.charge_time);
 					//隐藏弹出框
 					//this.togglePopup('');
 				}
@@ -289,8 +316,10 @@
 			confirmRechangeTime:function(){
 				this.hidechangeTimePopup=true;
 			},
-			selectBattery:function(value){
-				this.battery_type_value=value+">";
+			selectBattery:function(item){
+				console.log("selectBattery....");
+				this.battery_type_value=item.text;
+				this.battery_type_price=item.price;
 				this.togglePopup('');
 				
 			},
@@ -303,12 +332,24 @@
 			    this.hour = this.hours[val[0]]
 			    this.mintue = this.minutes[val[1]]
 				console.log("this.hour=="+this.hour+",this.mintue=="+this.mintue);
-				if(this.hour==0 && this.mintue==0){
-					this.charge_time_value="充满即止不限时";
+				if(this.hour==0){
+					if(this.mintue==0){
+						this.charge_time_value="充满即止不限时";
+						this.charge_time=8;
+					}else if(this.mintue==30){
+						this.charge_time_value=this.hour+'时'+this.mintue+'分';
+						this.charge_time=this.hour+0.5;
+					}
 				}else{
-					this.charge_time_value=this.hour+'时'+this.mintue+'分>';
+					if(this.mintue==0){
+						this.charge_time_value=this.hour+'时';
+						this.charge_time=this.hour;
+					}else if(this.mintue==30){
+						this.charge_time_value=this.hour+'时'+this.mintue+'分';
+						this.charge_time=this.hour+0.5;
+					}
 				}
-				console.log("this.charge_time_value=="+this.charge_time_value);
+				console.log("this.charge_time_value=="+this.charge_time_value+",this.charge_time=="+this.charge_time);
 			    // this.day = this.days[val[2]]
 			},
 			oauth() {//value
@@ -369,12 +410,12 @@
 				this.old.scrollTop = e.detail.scrollTop
 			},
 		},
-		onLoad() {
+		onShow() {
 			this.username=uni.getStorageSync("username");
 			console.log("onLoad username..."+this.username);
 			if(this.username==''){
 				console.log("onLoad username is null to oauth...");
-				this.oauth();
+				//this.oauth();
 			}
 		}
 	}
