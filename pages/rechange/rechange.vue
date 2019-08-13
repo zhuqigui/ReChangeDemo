@@ -8,8 +8,8 @@
 			</view>
 			<!--显示编号-->
 			<view class="scan_result">
-				<view class="scan_result-item">
-					{{result}}
+				<view class="scan_result-item" v-for="item in result">
+					{{item}}
 				</view>
 			</view>
 			<!--6个充电口状态-->
@@ -122,7 +122,7 @@
 				swiperGridHeight: '0px',
 				swiperGridWidth: '100%',
 				title: 'rechange',
-				result: '',
+				result: '222333',
 				username:'',
 				hidechangeTimePopup:false,//隐藏充电时长弹出菜单
 				isShowHowtoKnowBatteryType:false,//默认隐藏如何知道电池类型
@@ -162,6 +162,7 @@
 				showSelected:false,
 				batteryTypecurrent:0,
 				totalMoney:0,
+				spendMoney:0,
 				batteryTypeList:[],
 				// batteryTypeList: [{
 				// 		text: '铅酸36V',
@@ -225,7 +226,8 @@
 				value: [hour,mintue],
 				battery_type_value:'>',
 				charge_time_value:'>',
-				battery_type_price:'',
+				change_time:0,
+				battery_type_price:'-/-',
 				/**
 				 * 解决动态设置indicator-style不生效的问题
 				 */
@@ -285,6 +287,45 @@
 				});
 			},
 			btnCommit:function(){
+				this.spendMoney=this.battery_type_price*this.change_time;
+				uni.request({
+					url: 'http://192.168.1.111:8000/api/charge/facility/order_submit/',
+					dataType: 'text',
+					header: {
+						'Authorization': this.token //把token提交到请求头
+					},
+					data: {
+						facility_id:222333,//
+						hole_id:1,
+						phone:this.phonenumber,
+						money:this.spendMoney
+					},
+					method: 'POST',
+				}).then(res => {
+					console.log('request success', res[1]);
+					uni.showToast({
+						title: '获取电池种类列表成功',
+						icon: 'success',
+						mask: true,
+						duration: 2000
+					});
+					//this.res =JSON.stringify(res[1]);
+					this.loading = false;
+					var data = JSON.parse(res[1].data)
+					this.batteryTypeList=data.data;
+					// this.totalMoney=data.data['money'];
+					// console.log("data==" + data);
+					// for (var val in data.data) {
+					// 	console.log("data.data[val]['name']==" +data.data[val]['name']+",val=="+val);
+					// }
+				}).catch(err => {
+					console.log('request fail', err);
+					// uni.showModal({
+					// 	content: err.errMsg,
+					// 	showCancel: false
+					// });
+					this.loading = false;
+				});
 				console.log("btnCommit....");
 				this.showSelected=true;
 			},
@@ -316,8 +357,15 @@
 					console.log("popupType==bottom-time");
 					if(this.hour==0 && this.mintue==0){
 						this.charge_time_value="充满即止不限时";
+						this.change_time=6;
 					}else{
 						this.charge_time_value=this.hour+'时'+this.mintue+'分>';
+						if(this.mintue==30){
+							this.change_time=this.hour+0.5;
+						}else{
+							this.change_time=this.hour;
+						}
+							
 					}
 					console.log("this.charge_time_value=="+this.charge_time_value);
 					//隐藏弹出框
@@ -414,14 +462,14 @@
 			}
 		},
 		onLoad() {
-			this.phonenumber=uni.getStorageSync("phone");
-			console.log("onLoad phonenumber..."+this.phonenumber);
-			if(this.phonenumber==''){
-				console.log("onLoad phonenumber is null to oauth...");
-				this.gotoUserLogin();
-				return;
-				//this.oauth();
-			}
+			// this.phonenumber=uni.getStorageSync("phone");
+			// console.log("onLoad phonenumber..."+this.phonenumber);
+			// if(this.phonenumber==''){
+			// 	console.log("onLoad phonenumber is null to oauth...");
+			// 	this.gotoUserLogin();
+			// 	return;
+			// 	//this.oauth();
+			// }
 			//向服务器请求充电闲置忙碌状态
 			this.phonenumber = uni.getStorageSync("phone");
 			this.token = uni.getStorageSync("token");
@@ -522,7 +570,7 @@ view {
 	padding: 10upx 0;
 	display: flex;
 	min-height: 10upx;
-	width: 100%;
+	width: 16%;
 	background-color: #FFFFFF;
 	justify-content: center;
 	align-items: center;
