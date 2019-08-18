@@ -3,7 +3,7 @@
 		<!--当前登录号码-->
 		<view class="uni-flex uni-row" style="justify-content: space-between;">
 			<!-- <input class="uni-input" type="number" placeholder="请输入手机号" @focus="onFocus" @blur="onBlur" /> -->
-			<view>{{phone}}</view>
+			<view>{{phonenumber}}</view>
 			<view>当前登录号码</view>
 		</view>
 		<!--充值金额-->
@@ -19,7 +19,7 @@
 				<button class="mini-btn" v-bind:type="isTwoHundredPrimary?'primary':'default'" v-on:click="selectTwoHundredYuan()" plain="true">200元</button>
 				<!--style="font-size: 28upx;" class="uni-input"-->
 				<button class="mini-btn" v-bind:type="isOtherPrimary?'primary':'default'" plain="true">
-					<input style="height: 120upx;font-size: 36upx;" type="number" @input="selectOtherMoney" placeholder="其他金额" />
+					<input style="height: 120upx;font-size: 36upx;" type="number" @input="selectOtherMoney" placeholder="其他金额" :value="selfPushMoney" />
 				</button>
 			</view>
 		</view>
@@ -43,6 +43,7 @@
 				isTwoHundredPrimary:false,
 				isOtherPrimary:false,
 				pushMoney:0,
+				selfPushMoney:'',
 				phonenumber: '',
 				token: '',
 			}
@@ -142,6 +143,7 @@
 			},
 			selectOtherMoney:function(event){
 				this.pushMoney= event.target.value;
+				this.selfPushMoney=this.pushMoney;
 				console.log("selectOtherMoney this.pushMoney=="+this.pushMoney);
 				//动态设置点击的按钮的类型变为primary
 				//this.$emit().
@@ -183,31 +185,35 @@
 					method: 'POST',
 				}).then(res => {
 					console.log('request success', res[1]);
-					uni.showToast({
-						title: '充值成功',
-						icon: 'success',
-						mask: true,
-						duration: 2000
-					});
 					//this.res =JSON.stringify(res[1]);
 					this.loading = false;
 					var data = JSON.parse(res[1].data)
 					this.totalMoney=data.data['money'];
 					console.log("totalMoney==" + data.data['money']);
+					uni.showModal({
+						title: '充值成功',
+						content:"余额为"+this.totalMoney,
+						showCancel:false,
+						success: function(res) {}
+					});
 				}).catch(err => {
 					console.log('request fail', err);
 					uni.showModal({
-						content: err.errMsg,
-						showCancel: false
+						title: '充值失败',
+						content:"错误信息为"+err.msg,
+						showCancel:false,
+						success: function(res) {}
 					});
 					this.loading = false;
 				});
 				this.pushMoney='';//充值完成后清空充值金额
+				this.selfPushMoney='';充值完成后清空自定义金额
 			}
 			
 		},
-		onLoad() {
-			this.phone=uni.getStorageSync("phone");
+		onShow() {
+			this.phonenumber=uni.getStorageSync("phone");
+			console.log("onShow this.phonenumber=="+this.phonenumber);
 		}
 	}
 </script>

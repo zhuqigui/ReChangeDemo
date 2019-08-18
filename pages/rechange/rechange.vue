@@ -8,14 +8,42 @@
 			</view>
 			<!--显示编号-->
 			<view class="scan_result">
-				<view class="scan_result-item" v-for="item in result">
+				<view class="scan_result-item" :key="index" v-for="(item,index) in result">
 					{{item}}
 				</view>
 			</view>
 			<!--6个充电口状态-->
 			<view class="page">
 				<view class="example">
-					<uni-grid :options="data3" :show-out-border="false" @change="selectChangeNum" />
+					<!-- <uni-grid :options="data3" :show-out-border="false" @change="selectChangeNum" /> -->
+					<view class="uni-flex uni-row">
+						<view class="flex-item">
+							<text class="uni-grid-item-text">1</text>
+							<text class="uni-grid-item-text">slots1</text>
+						</view>
+						<view class="flex-item">
+							<text class="uni-grid-item-text">1</text>
+							<text class="uni-grid-item-text">slots1</text>
+						</view>
+						<view class="flex-item">
+							<text class="uni-grid-item-text">1</text>
+							<text class="uni-grid-item-text">slots1</text>
+						</view>
+					</view>
+					<view class="uni-flex uni-row">
+						<view class="flex-item uni-column">
+							<text class="uni-grid-item-text">1</text>
+							<text class="uni-grid-item-text">slots1</text>
+						</view>
+						<view class="flex-item uni-column">
+							<text class="uni-grid-item-text">1</text>
+							<text class="uni-grid-item-text">slots1</text>
+						</view>
+						<view class="flex-item">
+							<text class="uni-grid-item-text">1</text>
+							<text class="uni-grid-item-text">slots1</text>
+						</view>
+					</view>
 				</view>
 			</view>
 			<!--电池类型-->
@@ -122,39 +150,41 @@
 				swiperGridHeight: '0px',
 				swiperGridWidth: '100%',
 				title: 'rechange',
-				result: '222333',
+				result: '111111',
 				username:'',
 				hidechangeTimePopup:false,//隐藏充电时长弹出菜单
 				isShowHowtoKnowBatteryType:false,//默认隐藏如何知道电池类型
+				charge_list_ports:[],
+				//data: "{"code":200,"data":{"id":4,"slots1":"空闲","slots2":"空闲","slots3":"空闲","slots4":"空闲","slots5":"空闲","slots6":"空闲","facility_num":222222
 				data3: [{
 						// image: '/static/c1.png',
-						num:'1',
-						text: '空闲'
+						//num:'1',
+						slots1: '空闲'
 					},
 					{
 						// image: '/static/c2.png',
-						num:'2',
-						text: '空闲'
+						//num:'2',
+						slots2: '充电中'
 					},
 					{
 						// image: '/static/c3.png',
-						num:'3',
-						text: '空闲'
+						//num:'3',
+						slots3: '空闲'
 					},
 					{
 						// image: '/static/c4.png',
-						num:'4',
-						text: '空闲'
+						//num:'4',
+						slots4: '空闲'
 					},
 					{
 						// image: '/static/c5.png',
-						num:'5',
-						text: '空闲'
+						//num:'5',
+						slots5: '空闲'
 					},
 					{
 						// image: '/static/c6.png',
-						num:'6',
-						text: '空闲'
+						//num:'6',
+						slots6: '空闲'
 					}
 				],
 				popupType: '',
@@ -288,6 +318,7 @@
 				battery_type_value:'>',
 				charge_time_value:'>',
 				change_time:0,
+				currentSlot:1,//选中的充电口
 				/**
 				 * 解决动态设置indicator-style不生效的问题
 				 */
@@ -305,7 +336,7 @@
 				uni.scanCode({
 					success: (res) => {
 						//首先用字符串的split方法将字符串变成数组 在用数组的join方法将数组变成字符串中
-						this.result = res.result.split("").join("  ");
+						this.result = res.result;//.split("").join("  ");
 						console.log("this.result=="+this.result);
 						//console.log(result.split("").join(" "));
 						//向服务器请求充电闲置忙碌状态
@@ -315,24 +346,16 @@
 						uni.request({
 							url: 'http://39.106.217.14:8000/api/charge/facility/',
 							dataType: 'text',
-							// header: {
-							// 	'Authorization': this.token //把token提交到请求头
-							// },
 							data: {
 								facility_id:this.result
 							},
 							method: 'GET',
 						}).then(res => {
 							console.log('request success', res[1]);
-							uni.showToast({
-								title: '获取充电闲置忙碌状态成功',
-								icon: 'success',
-								mask: true,
-								duration: 2000
-							});
-							//this.res =JSON.stringify(res[1]);
 							this.loading = false;
-							// var data = JSON.parse(res[1].data)
+							var data = JSON.parse(res[1].data)
+							//获取充电口的列表状态
+							this.charge_list_ports=data.data;
 							// this.totalMoney=data.data['money'];
 							// console.log("totalMoney==" + data.data['money']);
 						}).catch(err => {
@@ -347,7 +370,14 @@
 				});
 			},
 			btnCommit:function(){
-				this.spendMoney=this.battery_type_price*this.change_time;
+				if(this.result==null || this.result==''){
+					uni.showModal({
+						title:'充电提示',
+						content:'请先扫码选择充电口!',
+						showCancel:false,
+					})
+					return;
+				}
 				uni.request({
 					url: 'http://39.106.217.14:8000/api/charge/facility/order_submit/',
 					dataType: 'text',
@@ -355,24 +385,32 @@
 						'Authorization': this.token //把token提交到请求头
 					},
 					data: {
-						facility_id:222333,//
-						hole_id:1,
+						facility_id:this.result,//
+						hole_id:this.currentSlot,
 						phone:this.phonenumber,
-						money:this.spendMoney
+						money:this.spendMoney,
+						second:this.charge_time*3600
 					},
 					method: 'POST',
 				}).then(res => {
 					console.log('request success', res[1]);
-					uni.showToast({
-						title: '获取电池种类列表成功',
-						icon: 'success',
-						mask: true,
-						duration: 2000
-					});
 					//this.res =JSON.stringify(res[1]);
 					this.loading = false;
 					var data = JSON.parse(res[1].data)
 					this.batteryTypeList=data.data;
+					var code=data['code'];
+					console.log("code=="+code);
+					if(code==1009){
+						var errorMsg = data.data['errmsg'];
+						console.log("errorMsg==" + errorMsg);
+						uni.showModal({
+							title: '提交订单失败',
+							content:errorMsg,
+							showCancel:false,
+							success: function(res) {}
+						});
+						return;
+					}
 					// this.totalMoney=data.data['money'];
 					// console.log("data==" + data);
 					// for (var val in data.data) {
@@ -380,25 +418,21 @@
 					// }
 				}).catch(err => {
 					console.log('request fail', err);
-					// uni.showModal({
-					// 	content: err.errMsg,
-					// 	showCancel: false
-					// });
 					this.loading = false;
 				});
 				console.log("btnCommit....");
 				this.showSelected=true;
 				//计算应该花费的金额
-				this.balance=this.balance-this.charge_time*this.battery_type_price;
+				this.totalMoney=this.totalMoney-this.charge_time*this.battery_type_price;
 				console.log("btnCommit this.spendMoney.."+this.spendMoney+",this.charge_time="+this.charge_time
-				+",this.battery_type_price=="+this.battery_type_price);
+				+",this.battery_type_price=="+this.battery_type_price+",这次花费金额为=="+this.charge_time*this.battery_type_price);
 				//插入充电记录
-				this.changeRecordList.push({
-					id:this.nextTodoId++,
-					batteryType:this.battery_type_value,
-					price:this.charge_time*this.battery_type_price,
-				});
-				uni.setStorageSync("changeRecordList",this.changeRecordList);
+				// this.changeRecordList.push({
+				// 	id:this.nextTodoId++,
+				// 	batteryType:this.battery_type_value,
+				// 	price:this.charge_time*this.battery_type_price,
+				// });
+				// uni.setStorageSync("changeRecordList",this.changeRecordList);
 			},
 			selectItem:function(){
 				let tabBarOptions = {
@@ -545,12 +579,22 @@
 			}
 		},
 		onShow() {
-			// this.username=uni.getStorageSync("username");
-			// console.log("onLoad username..."+this.username);
-			// if(this.username==''){
-			// 	console.log("onLoad username is null to oauth...");
-			// 	//this.oauth();
-			// }
+			// uni.request({
+			// 	url: 'http://39.106.217.14:8000/api/charge/battery_type/',
+			// 	dataType: 'text',
+			// 	data: {
+			// 		facility_id:this.result
+			// 	},
+			// 	method: 'GET',
+			// }).then(res => {
+			// 	console.log('request success', res[1]);
+			// 	this.loading = false;
+			// 	var data = JSON.parse(res[1].data)
+			// 	this.batteryTypeList=data.data;
+			// }).catch(err => {
+			// 	console.log('request fail', err);
+			// 	this.loading = false;
+			// });
 		},
 		onLoad(){
 			this.phonenumber=uni.getStorageSync("phone");
@@ -565,42 +609,7 @@
 			this.phonenumber = uni.getStorageSync("phone");
 			this.token = uni.getStorageSync("token");
 			console.log("this.phonenumber==" + this.phonenumber + ",this.token==" + this.token);
-			uni.request({
-				url: 'http://39.106.217.14:8000/api/charge/battery_type/',
-				dataType: 'text',
-				// header: {
-				// 	'Authorization': this.token //把token提交到请求头
-				// },
-				data: {
-					facility_id:this.result
-				},
-				method: 'GET',
-			}).then(res => {
-				console.log('request success', res[1]);
-				uni.showToast({
-					title: '获取电池种类列表成功',
-					icon: 'success',
-					mask: true,
-					duration: 2000
-				});
-				//this.res =JSON.stringify(res[1]);
-				this.loading = false;
-				var data = JSON.parse(res[1].data)
-				this.batteryTypeList=data.data;
-				// this.totalMoney=data.data['money'];
-				// console.log("data==" + data);
-				// for (var val in data.data) {
-				// 	console.log("data.data[val]['name']==" +data.data[val]['name']+",val=="+val);
-				// }
-			}).catch(err => {
-				console.log('request fail', err);
-				// uni.showModal({
-				// 	content: err.errMsg,
-				// 	showCancel: false
-				// });
-				this.loading = false;
-			});
-			//向服务器请求余额状态
+			//向服务器请求余额状
 			uni.request({
 				url: 'http://39.106.217.14:8000/api/user/wallet/',
 				dataType: 'text',
@@ -615,12 +624,12 @@
 				method: 'GET',
 			}).then(res => {
 				console.log('request success', res[1]);
-				uni.showToast({
-					title: '获取成功',
-					icon: 'success',
-					mask: true,
-					duration: 2000
-				});
+				// uni.showToast({
+				// 	title: '获取成功',
+				// 	icon: 'success',
+				// 	mask: true,
+				// 	duration: 2000
+				// });
 				//this.res =JSON.stringify(res[1]);
 				this.loading = false;
 				var data = JSON.parse(res[1].data)
@@ -829,5 +838,19 @@ view {
 	.item {
 	    line-height: 100upx;
 	    text-align: center;
+	}
+	.flex-item {
+		width: 33.3%;
+		height: 150upx;
+		text-align: center;
+		line-height: 150upx;
+		flex-direction: column;
+	}
+	
+	.flex-item-V {
+		width: 100%;
+		height: 100upx;
+		text-align: center;
+		line-height: 100upx;
 	}
 </style>

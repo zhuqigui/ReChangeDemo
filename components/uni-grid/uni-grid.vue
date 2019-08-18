@@ -2,10 +2,10 @@
 	<view :class="{'uni-grid-no-border':!showBorder,'uni-grid-no-out-border':showBorder && !showOutBorder}" class="uni-grid">
 		<view v-for="(items,i) in gridGroup" :key="i" class="uni-grid__flex">
 			<view  v-for="(item,index) in items" :hover-start-time="20" :hover-stay-time="70" :key="index" :class="[index == columnNum ? 'uni-grid-item-last' : '','uni-grid-item-' + type]" :style="{visibility:item.seize ? 'hidden' : 'inherit'}" class="uni-grid-item" hover-class="uni-grid-item-hover" @click="onClick(i,index)">
-				<view v-if="!item.seize" class="uni-grid-item__content" v-bind:class="{uni_grid_item_content_selected:item.num== currentSelect}">
+				<view v-if="!item.seize" class="uni-grid-item__content" v-bind:class="{uni_grid_item_content_selected:index== currentSelect}">
 					<!-- <image :src="item.image" class="uni-grid-item-image" /> -->
-					<text class="uni-grid-item-text" v-bind:class="{uni_grid_item_text_selected:item.num==currentSelect}">{{ item.num }}</text>
-					<text class="uni-grid-item-text" v-bind:class="{uni_grid_item_text_selected:item.num==currentSelect}">{{ item.text }}</text>
+					<text class="uni-grid-item-text" v-bind:class="{uni_grid_item_text_selected:index==currentSelect}">{{ i }}1</text>
+					<text class="uni-grid-item-text" v-bind:class="{uni_grid_item_text_selected:index==currentSelect}">{{ item.slots}}test</text>
 				</view>
 			</view>
 		</view>
@@ -75,7 +75,7 @@
 			}
 		},
 		created() {
-			this.columnNumber = this.gridGroup[0].length
+			this.columnNumber = 3;//this.gridGroup[0].length
 		},
 		methods: {
 			onClick(index,num) {

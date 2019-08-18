@@ -3,8 +3,8 @@
 		<view v-if="changeRecordList.length>0">
 			<uni-list v-for="(item, index) in changeRecordList" :key="index" class="change_record_list_class">
 				<uni-list-item title="" note="" class="change_record_list_item_class">{{item.id}}</uni-list-item>
-				<uni-list-item title="" note="" class="change_record_list_item_class">{{item.batteryType}}</uni-list-item>
-				<uni-list-item title="" note="" class="change_record_list_item_class">{{item.price}}</uni-list-item>
+				<uni-list-item title="" note="" class="change_record_list_item_class">{{item.create_date}}</uni-list-item>
+				<uni-list-item title="" note="" class="change_record_list_item_class">{{item.money}}</uni-list-item>
 			</uni-list>
 		</view>
 		<view v-if="changeRecordList.length===0">
@@ -33,13 +33,13 @@
 			
 		},
 		onShow() {
-			this.changeRecordList=uni.getStorageSync("changeRecordList");
-			console.log("onShow init this.changeRecordList.length..."+this.changeRecordList.length);
-			for (var i = 0; i < this.changeRecordList.length; i++) {
-				console.log("this.changeRecordList[i].id=="+this.changeRecordList[i].id);
-				console.log("this.changeRecordList[i].batteryType=="+this.changeRecordList[i].batteryType);
-				console.log("this.changeRecordList[i].price=="+this.changeRecordList[i].price);
-			}
+			// this.changeRecordList=uni.getStorageSync("changeRecordList");
+			// console.log("onShow init this.changeRecordList.length..."+this.changeRecordList.length);
+			// for (var i = 0; i < this.changeRecordList.length; i++) {
+			// 	console.log("this.changeRecordList[i].id=="+this.changeRecordList[i].id);
+			// 	console.log("this.changeRecordList[i].batteryType=="+this.changeRecordList[i].batteryType);
+			// 	console.log("this.changeRecordList[i].price=="+this.changeRecordList[i].price);
+			// }
 			this.phonenumber = uni.getStorageSync("phone");
 			this.token = uni.getStorageSync("token");
 			console.log("this.phonenumber==" + this.phonenumber + ",this.token==" + this.token);
@@ -67,6 +67,18 @@
 				//this.res =JSON.stringify(res[1]);
 				this.loading = false;
 				var data = JSON.parse(res[1].data)
+				var code=data['code'];
+				if(code==200){
+					// for(var i=0;i<data.data.length;i++){
+					// 	//2019-08-07T10:04:54
+					// 	data.data['create_date']=(data.data['create_date']).substring(0,10);
+					// }
+					this.changeRecordList=data.data;
+					for(var i=0;i<this.changeRecordList.length;i++){
+						this.changeRecordList[i].create_date=this.changeRecordList[i].create_date.substring(0,10);
+						console.log(this.changeRecordList[i].create_date);
+					}
+				}
 				// this.totalMoney=data.data['money'];
 				// console.log("totalMoney==" + data.data['money']);
 			}).catch(err => {
