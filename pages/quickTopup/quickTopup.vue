@@ -2,8 +2,9 @@
 	<view>
 		<!--当前登录号码-->
 		<view class="uni-flex uni-row" style="justify-content: space-between;">
-			<input class="uni-input" type="number" placeholder="请输入手机号" @focus="onFocus" @blur="onBlur" />
-			<view v-if="showCurrentNumber">当前登录号码</view>
+			<!-- <input class="uni-input" type="number" placeholder="请输入手机号" @focus="onFocus" @blur="onBlur" /> -->
+			<view>{{phone}}</view>
+			<view>当前登录号码</view>
 		</view>
 		<!--充值金额-->
 		<view>
@@ -17,8 +18,8 @@
 				<button class="mini-btn" v-bind:type="isOneHundredPrimary?'primary':'default'" v-on:click="selectOneHundredYuan()" plain="true">100元</button>
 				<button class="mini-btn" v-bind:type="isTwoHundredPrimary?'primary':'default'" v-on:click="selectTwoHundredYuan()" plain="true">200元</button>
 				<!--style="font-size: 28upx;" class="uni-input"-->
-				<button class="mini-btn" v-bind:type="isOtherPrimary?'primary':'default'" v-on:click="selectOtherMoney()" plain="true">
-					<input style="height: 120upx;font-size: 36upx;" type="number" placeholder="其他金额" />
+				<button class="mini-btn" v-bind:type="isOtherPrimary?'primary':'default'" plain="true">
+					<input style="height: 120upx;font-size: 36upx;" type="number" @input="selectOtherMoney" placeholder="其他金额" />
 				</button>
 			</view>
 		</view>
@@ -41,6 +42,9 @@
 				isOneHundredPrimary:false,
 				isTwoHundredPrimary:false,
 				isOtherPrimary:false,
+				pushMoney:0,
+				phonenumber: '',
+				token: '',
 			}
 		},
 		methods: {
@@ -57,6 +61,7 @@
 				// })
 			},
 			selectFiveYuan:function(){
+				this.pushMoney=5;
 				//动态设置点击的按钮的类型变为primary
 				//this.$emit().
 				if(this.isFivePrimary){
@@ -72,6 +77,7 @@
 				}
 			},
 			selectTwentyYuan:function(){
+				this.pushMoney=20;
 				//动态设置点击的按钮的类型变为primary
 				//this.$emit().
 				if(this.isTwentyPrimary){
@@ -87,6 +93,7 @@
 				}
 			},
 			selectFiftyYuan:function(){
+				this.pushMoney=50;
 				//动态设置点击的按钮的类型变为primary
 				//this.$emit().
 				if(this.isFiftyPrimary){
@@ -102,6 +109,7 @@
 				}
 			},
 			selectOneHundredYuan:function(){
+				this.pushMoney=100;
 				//动态设置点击的按钮的类型变为primary
 				//this.$emit().
 				if(this.isOneHundredPrimary){
@@ -117,6 +125,7 @@
 				}
 			},
 			selectTwoHundredYuan:function(){
+				this.pushMoney=200;
 				//动态设置点击的按钮的类型变为primary
 				//this.$emit().
 				if(this.isTwoHundredPrimary){
@@ -131,7 +140,9 @@
 					this.isOtherPrimary=false
 				}
 			},
-			selectOtherMoney:function(){
+			selectOtherMoney:function(event){
+				this.pushMoney= event.target.value;
+				console.log("selectOtherMoney this.pushMoney=="+this.pushMoney);
 				//动态设置点击的按钮的类型变为primary
 				//this.$emit().
 				if(this.isOtherPrimary){
@@ -147,15 +158,56 @@
 				}
 			},
 			btnCommit:function(){
-				uni.requestPayment({
-					provider: '',
-					orderInfo: '',
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
+				//先不调用微信充值（需要企业客户），只是更新模拟数据
+				// uni.requestPayment({
+				// 	provider: '',
+				// 	orderInfo: '',
+				// 	success: res => {},
+				// 	fail: () => {},
+				// 	complete: () => {}
+				// });
+				this.phonenumber = uni.getStorageSync("phone");
+				this.token = uni.getStorageSync("token");
+				//console.log("this.phonenumber==" + this.phonenumber + ",this.token==" + this.token);
+				uni.request({
+					url: 'http://39.106.217.14:8000/api/quickcharge/pushmoney/',
+					dataType: 'text',
+					header: {
+						'Authorization': this.token //把token提交到请求头
+					},
+					data: {
+						//noncestr: Date.now()
+						phone: this.phonenumber,
+						money:this.pushMoney
+					},
+					method: 'POST',
+				}).then(res => {
+					console.log('request success', res[1]);
+					uni.showToast({
+						title: '充值成功',
+						icon: 'success',
+						mask: true,
+						duration: 2000
+					});
+					//this.res =JSON.stringify(res[1]);
+					this.loading = false;
+					var data = JSON.parse(res[1].data)
+					this.totalMoney=data.data['money'];
+					console.log("totalMoney==" + data.data['money']);
+				}).catch(err => {
+					console.log('request fail', err);
+					uni.showModal({
+						content: err.errMsg,
+						showCancel: false
+					});
+					this.loading = false;
 				});
+				this.pushMoney='';//充值完成后清空充值金额
 			}
 			
+		},
+		onLoad() {
+			this.phone=uni.getStorageSync("phone");
 		}
 	}
 </script>

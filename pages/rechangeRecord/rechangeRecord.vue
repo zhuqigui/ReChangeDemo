@@ -22,6 +22,8 @@
 			return {
 				//changeRecordList:[{id:1,batteryType:"haha",price:2.3},{id:1,batteryType:"haha",price:2.3},{id:1,batteryType:"haha",price:2.3}],//充电记录列表id,batteryType,price
 				changeRecordList:[],
+				phonenumber: '',
+				token: '',
 			}
 		},
 		methods: {
@@ -38,6 +40,43 @@
 				console.log("this.changeRecordList[i].batteryType=="+this.changeRecordList[i].batteryType);
 				console.log("this.changeRecordList[i].price=="+this.changeRecordList[i].price);
 			}
+			this.phonenumber = uni.getStorageSync("phone");
+			this.token = uni.getStorageSync("token");
+			console.log("this.phonenumber==" + this.phonenumber + ",this.token==" + this.token);
+			uni.request({
+				url: 'http://39.106.217.14:8000/api/chargerecord/',
+				dataType: 'text',
+				header: {
+					'Authorization': this.token //把token提交到请求头
+				},
+				data: {
+					//noncestr: Date.now()
+					phone: this.phonenumber,
+					// oldPwd:this.oldPwd,
+					// newPwd:this.newPwd
+				},
+				method: 'GET',
+			}).then(res => {
+				console.log('request success', res[1]);
+				uni.showToast({
+					title: '获取充电订单记录成功',
+					icon: 'success',
+					mask: true,
+					duration: 2000
+				});
+				//this.res =JSON.stringify(res[1]);
+				this.loading = false;
+				var data = JSON.parse(res[1].data)
+				// this.totalMoney=data.data['money'];
+				// console.log("totalMoney==" + data.data['money']);
+			}).catch(err => {
+				console.log('request fail', err);
+				uni.showModal({
+					content: err.errMsg,
+					showCancel: false
+				});
+				this.loading = false;
+			});
 		}
 	}
 </script>

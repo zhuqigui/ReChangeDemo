@@ -5,6 +5,10 @@
 		},
 		onShow: function() {
 			console.log('App Show')
+			//只是方便调试，单独启动页面
+			// uni.navigateTo({
+			// 	url:"/pages/myRechange/userRegister/userRegister"
+			// })
 		},
 		onHide: function() {
 			console.log('App Hide')

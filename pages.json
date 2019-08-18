@@ -80,23 +80,38 @@
 		}
 	    ,{
             "path" : "pages/myRechange/userinfo/userinfo",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "用户信息",
+				"enablePullDownRefresh": true
+			}
         }
         ,{
             "path" : "pages/myRechange/userinfoSwitchCity/userinfoSwitchCity",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "选择城市",
+				"enablePullDownRefresh": true
+			}
         }
         ,{
             "path" : "pages/myRechange/settings/settings",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "设置",
+				"enablePullDownRefresh": true
+			}
         }
         ,{
             "path" : "pages/myRechange/updatePassword/updatePassword",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "更新密码",
+				"enablePullDownRefresh": true
+			}
         }
         ,{
             "path" : "pages/myRechange/myMoneyBox/myMoneyBox",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "我的钱包",
+				"enablePullDownRefresh": true
+			}
         }
         ,{
             "path" : "pages/myRechange/discountCoupon/discountCoupon",
@@ -107,18 +122,48 @@
         }
         ,{
             "path" : "pages/myRechange/feedback/feedback",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "反馈",
+				"enablePullDownRefresh": true
+			}
         }
         ,{
             "path" : "pages/myRechange/aboutMe/aboutMe",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "关于",
+				"enablePullDownRefresh": true
+			}
         }
         ,{
             "path" : "pages/myRechange/userDocs/userDocs",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "用户手册",
+				"enablePullDownRefresh": true
+			}
         }
         ,{
             "path" : "pages/myRechange/nearSite/nearSite",
+            "style" : {
+				"navigationBarTitleText": "附近",
+				"enablePullDownRefresh": true
+			}
+        }
+        ,{
+            "path" : "pages/myRechange/userRegister/userRegister",
+            "style" : {
+				"navigationBarTitleText": "用户注册",
+				"enablePullDownRefresh": true
+			}
+        }
+        ,{
+            "path" : "pages/myRechange/userLogin/userLogin",
+            "style" : {
+				"navigationBarTitleText": "用户登录",
+				"enablePullDownRefresh": true
+			}
+        }
+        ,{
+            "path" : "pages/myRechange/forgetPassword/forgetPassword",
             "style" : {}
         }
     ],

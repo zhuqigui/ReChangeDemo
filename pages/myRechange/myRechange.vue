@@ -4,7 +4,7 @@
 		<view class="uni-flex uni-row uni-list-cell head" style="justify-content: space-between;" hover-class="uni-list-cell-hover" @click="gotoUserinfo">
 			<view style="text-align: center;" class="uni-flex uni-row uni-list-cell">
 				<image class="head-image" src="../../static/my.jpg" style="border-radius: 50%;"></image>
-				<text class="head-phone-number">{{username}}</text>
+				<text class="head-phone-number">{{phone}}</text>
 			</view>
 			<view>></view>
 		</view>
@@ -63,7 +63,8 @@
 	export default {
 		data() {
 			return {
-				username:''
+				username:'',
+				phone:''
 			}
 		},
 		methods: {
@@ -110,7 +111,8 @@
 			})
 		},
 		onLoad() {
-			this.username=uni.getStorageSync("username");
+			//this.username=uni.getStorageSync("username");
+			this.phone=uni.getStorageSync("phone");
 		}
 	}
 </script>
