@@ -17,7 +17,7 @@
 		</view>
 		<!--最下面注册账号+忘记密码按钮-->
 		<view class="uni-flex uni-row" style="justify-content: space-between;">
-			<view class="head" @click="gotoForgetPwd()" style="color: #007AFF;">忘记密码</view>
+			<!-- <view class="head" @click="gotoForgetPwd()" style="color: #007AFF;">忘记密码</view> -->
 			<view class="head head_right" @click="gotoRegister()" style="color: #007AFF;">注册账号</view>
 		</view>
 	</view>
@@ -124,6 +124,17 @@
 					url: "/pages/myRechange/userRegister/userRegister"
 				})
 			}
+		},
+		onLoad() {
+			console.log("onLoad...");
+			uni.hideTabBar({
+				success() {
+					console.log("success...");
+				},
+				fail(res) {
+					console.log("fail..."+res.msg);
+				}
+			})
 		}
 	}
 </script>
