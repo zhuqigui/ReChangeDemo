@@ -15,29 +15,29 @@
 				<view class="example">
 					<!-- <uni-grid :options="data3" :show-out-border="false" @change="selectChangeNum" /> -->
 					<view class="uni-flex uni-row">
-						<view class="flex-item uni-column">
+						<view class="flex-item" v-bind:class="{uni_bg_green:hole_id==1}" v-on:click="selectHole(1)">
 							<text class="uni-grid-item-text">1</text>
 							<text class="uni-grid-item-text">{{slots1}}</text>
 						</view>
-						<view class="flex-item uni-column">
+						<view class="flex-item" v-bind:class="{uni_bg_green:hole_id==2}" v-on:click="selectHole(2)">
 							<text class="uni-grid-item-text">2</text>
 							<text class="uni-grid-item-text">{{slots2}}</text>
 						</view>
-						<view class="flex-item uni-column">
+						<view class="flex-item" v-bind:class="{uni_bg_green:hole_id==3}" v-on:click="selectHole(3)">
 							<text class="uni-grid-item-text">3</text>
 							<text class="uni-grid-item-text">{{slots3}}</text>
 						</view>
 					</view>
 					<view class="uni-flex uni-row" style="margin-top:20upx;">
-						<view class="flex-item uni-column">
+						<view class="flex-item" v-bind:class="{uni_bg_green:hole_id==4}" v-on:click="selectHole(4)">
 							<text class="uni-grid-item-text">4</text>
 							<text class="uni-grid-item-text">{{slots4}}</text>
 						</view>
-						<view class="flex-item uni-column">
+						<view class="flex-item" v-bind:class="{uni_bg_green:hole_id==5}" v-on:click="selectHole(5)">
 							<text class="uni-grid-item-text">5</text>
 							<text class="uni-grid-item-text">{{slots5}}</text>
 						</view>
-						<view class="flex-item uni-column">
+						<view class="flex-item" v-bind:class="{uni_bg_green:hole_id==6}" v-on:click="selectHole(6)">
 							<text class="uni-grid-item-text">6</text>
 							<text class="uni-grid-item-text">{{slots6}}</text>
 						</view>
@@ -169,6 +169,7 @@ export default {
 			isShowHowtoKnowBatteryType: false, //默认隐藏如何知道电池类型
 			charge_list_ports: [],
 			//data: "{"code":200,"data":{"id":4,"slots1":"空闲","slots2":"空闲","slots3":"空闲","slots4":"空闲","slots5":"空闲","slots6":"空闲","facility_num":222222
+			hole_id: 1,
 			data3: [
 				{
 					// image: '/static/c1.png',
@@ -414,7 +415,7 @@ export default {
 				},
 				data: {
 					facility_id: this.result, //
-					hole_id: this.currentSlot,
+					hole_id:this.hole_id,
 					phone: this.phonenumber,
 					money: this.spendMoney,
 					second: this.charge_time * 3600
@@ -464,6 +465,12 @@ export default {
 					',这次花费金额为==' +
 					this.charge_time * this.battery_type_price
 			);
+			uni.showModal({
+				title: '提交订单成功',
+				content: "预计花费金额为"+(this.charge_time * this.battery_type_price),
+				showCancel: false,
+				success: function(res) {}
+			});
 			//插入充电记录
 			// this.changeRecordList.push({
 			// 	id:this.nextTodoId++,
@@ -613,11 +620,17 @@ export default {
 			uni.redirectTo({
 				url: '../myRechange/userLogin/userLogin'
 			});
+		},
+		selectHole:function(val){
+			this.hole_id=val;
+			//computedHoleMessage();
+			console.log("click1 this.hole_id=..."+val);
 		}
 	},
 	onShow() {},
 	onLoad() {
-		if (uni.getStorageSync('batteryTypeList') == null) {
+		console.log("onLoad uni.getStorageSync('batteryTypeList')=="+uni.getStorageSync('batteryTypeList'));
+		if (uni.getStorageSync('batteryTypeList') == '') {
 			uni.request({
 				url: 'http://39.106.217.14:8000/api/charge/battery_type/',
 				dataType: 'text',
@@ -637,6 +650,8 @@ export default {
 					console.log('request fail', err);
 					this.loading = false;
 				});
+		}else{
+			this.batteryTypeList =uni.getStorageSync('batteryTypeList');
 		}
 		this.phonenumber = uni.getStorageSync('phone');
 		console.log('onLoad phonenumber...' + this.phonenumber);
@@ -884,11 +899,13 @@ picker-view {
 }
 .flex-item {
 	width: 33.3%;
-	height: 100upx;
+	height: 140upx;
 	text-align: center;
-	line-height: 100upx;
+	/* line-height: 140upx; */
 	align-items: center;
 	justify-content: center;
+	flex-direction: column;
+	display: flex;
 }
 
 .flex-item-V {
@@ -908,4 +925,10 @@ picker-view {
 	flex-direction: column;
 	display: flex;
 }
+/* 背景色 */
+.uni_bg_green {
+	background-color:#09bb07;
+	color: #fff;
+}
+
 </style>
