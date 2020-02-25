@@ -3,13 +3,14 @@
 		<!--手机号码-->
 		<view class="uni-flex uni-row" style="justify-content: space-between;">
 			<view class="head">手机号:</view>
-			<input class="uni-input" maxlength="13" type="number" placeholder="请输入手机号" @input="onPhoneInput" :value="phonenumber" />
+			<!--:value="username"-->
+			<input class="uni-input" maxlength="13" type="number" placeholder="请输入手机号" @input="onPhoneInput" v-model="username" />
 		</view>
 		<!--密码-->
 		<view class="uni-flex uni-row uni-list-cell" style="justify-content: space-between;">
 			<view class="head">密 码:</view>
-			<input class="uni-input" maxlength="20" password type="number" @input="onPasswordInput" style="margin-left: 28upx;"
-			 :value="password" placeholder="请输入密码" />
+			<!--:value="password"-->
+			<input class="uni-input" maxlength="20" password type="number" @input="onPasswordInput" style="margin-left: 28upx;" v-model="password" placeholder="请输入密码" />
 		</view>
 		<!--登录按钮-->
 		<view>
@@ -30,79 +31,130 @@
 			return {
 				loading: false,
 				res: '',
-				phonenumber: '',
+				username: '',
 				password: ''
 			}
 		},
 		methods: {
-			login: function() {
-				console.log("this.phonenumber==" + this.phonenumber + ",this.password==" + this.password);
-				uni.request({
-					url: 'http://39.106.217.14:8000/api/user/login/',
-					dataType: 'text',
-					data: {
-						//noncestr: Date.now()
-						'phone': this.phonenumber,
-						'password': this.password
-					},
-					method: 'POST',
-				}).then(res => {
-					console.log('request success', res[1]);
-					// uni.showToast({
-					//   title: '登录成功',
-					//   icon: 'success',
-					//   mask: true,
-					//   duration: duration
-					// });
-					//this.res =JSON.stringify(res[1]);
-					this.loading = false;
-					//保存手机号、token和城市
-					// var phone=JSON.stringify(res[1])[]
-					var data = JSON.parse(res[1].data);
-					var code = data.code;
-					console.log("code==" + code);
-					//if(statusCode==500)
-					if (code == 1001 || code == 1002 ||
-						code == 1003 || code == 1004 ||
-						code == 1012
-					) {
-						var errorMsg = data.data['errmsg'];
-						console.log("errorMsg==" + errorMsg);
-						uni.showModal({
-							title: '登录失败',
-							content:errorMsg,
-							showCancel:false,
-							success: function(res) {}
-						});
-						this.phonenumber = "";
-						this.password = "";
-						return;
-					} else if (code == 400 || code == null) {
-						uni.showModal({
-							title: '登录失败',
-							content:"手机号和密码不能为空",
-							showCancel:false,
-							success: function(res) {}
-						});
-						return;
-					}
-					console.log("city==" + data.data['city']);
-					console.log("phone==" + data.data['phone']);
-					console.log("token==" + data.data['token']);
-					uni.setStorageSync("phone", data.data['phone']);
-					uni.setStorageSync("city", data.data['city']);
-					uni.setStorageSync("token", data.data['token']);
-					this.gotoRechange();
-					//this.$destroy();
-				}).catch(err => {
-					console.log('request fail', err);
-					uni.showModal({
-						content: err.errMsg,
-						showCancel: false
-					});
-					this.loading = false;
-				});
-			},
+			 login: function() {
+				 
+				 	const {
+				 		username,
+				 		password
+				 	} = this
+				 	if (!username) {
+				 		uni.showModal({
+				 			content: '请填写手机号码',
+				 			showCancel: false
+				 		})
+				 		return
+				 	}
+				 	if (!password) {
+				 		uni.showModal({
+				 			content: '请填写手机号码',
+				 			showCancel: false
+				 		})
+				 		return
+				 	}
+				 	uni.showLoading({
+				 		title: '登录中...'
+				 	})
+				 	this.$cloud.callFunction({
+				 		name: 'rechangedemo_login',
+				 		data: {
+				 			username,
+				 			password,
+				 		}
+				 	}).then((res) => {
+				 		uni.hideLoading()
+				 		if (res.result.token) {
+				 			uni.showToast({
+				 				title: '登录成功',
+				 				icon: 'none'
+				 			})
+				 			uni.setStorageSync('token', res.result.token)
+				 			uni.setStorageSync('username', res.result.username)
+				 			uni.switchTab({
+				 				url: '/pages/tabbar/member'
+				 			})
+				 		} else {
+				 			return Promise.reject(new Error(res.result.msg))
+				 		}
+				 	}).catch((err) => {
+				 		uni.hideLoading()
+				 		uni.showModal({
+				 			content: err.message || '登录失败',
+				 			showCancel: false
+				 		})
+				 	})
+				 
+			// 	console.log("this.phonenumber==" + this.phonenumber + ",this.password==" + this.password);
+			// 	uni.request({
+			// 		url: 'http://39.106.217.14:8000/api/user/login/',
+			// 		dataType: 'text',
+			// 		data: {
+			// 			//noncestr: Date.now()
+			// 			'phone': this.phonenumber,
+			// 			'password': this.password
+			// 		},
+			// 		method: 'POST',
+			// 	}).then(res => {
+			// 		console.log('request success', res[1]);
+			// 		// uni.showToast({
+			// 		//   title: '登录成功',
+			// 		//   icon: 'success',
+			// 		//   mask: true,
+			// 		//   duration: duration
+			// 		// });
+			// 		//this.res =JSON.stringify(res[1]);
+			// 		this.loading = false;
+			// 		//保存手机号、token和城市
+			// 		// var phone=JSON.stringify(res[1])[]
+			// 		var data = JSON.parse(res[1].data);
+			// 		var code = data.code;
+			// 		console.log("code==" + code);
+			// 		//if(statusCode==500)
+			// 		if (code == 1001 || code == 1002 ||
+			// 			code == 1003 || code == 1004 ||
+			// 			code == 1012
+			// 		) {
+			// 			var errorMsg = data.data['errmsg'];
+			// 			console.log("errorMsg==" + errorMsg);
+			// 			uni.showModal({
+			// 				title: '登录失败',
+			// 				content:errorMsg,
+			// 				showCancel:false,
+			// 				success: function(res) {}
+			// 			});
+			// 			this.phonenumber = "";
+			// 			this.password = "";
+			// 			return;
+			// 		} else if (code == 400 || code == null) {
+			// 			uni.showModal({
+			// 				title: '登录失败',
+			// 				content:"手机号和密码不能为空",
+			// 				showCancel:false,
+			// 				success: function(res) {}
+			// 			});
+			// 			return;
+			// 		}
+			// 		console.log("city==" + data.data['city']);
+			// 		console.log("phone==" + data.data['phone']);
+			// 		console.log("token==" + data.data['token']);
+			// 		uni.setStorageSync("phone", data.data['phone']);
+			// 		uni.setStorageSync("city", data.data['city']);
+			// 		uni.setStorageSync("token", data.data['token']);
+			// 		this.gotoRechange();
+			// 		//this.$destroy();
+			// 	}).catch(err => {
+			// 		console.log('request fail', err);
+			// 		uni.showModal({
+			// 			content: err.errMsg,
+			// 			showCancel: false
+			// 		});
+			// 		this.loading = false;
+			// 	});
+			 },
 			onPhoneInput: function(event) {
 				this.phonenumber = event.target.value
 			},
