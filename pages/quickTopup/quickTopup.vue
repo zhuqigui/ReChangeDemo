@@ -171,43 +171,61 @@
 				this.phonenumber = uni.getStorageSync("phone");
 				this.token = uni.getStorageSync("token");
 				//console.log("this.phonenumber==" + this.phonenumber + ",this.token==" + this.token);
-				uni.request({
-					url: 'http://39.106.217.14:8000/api/quickcharge/pushmoney/',
-					dataType: 'text',
-					header: {
-						'Authorization': this.token //把token提交到请求头
-					},
-					data: {
-						//noncestr: Date.now()
-						phone: this.phonenumber,
-						money:this.pushMoney
-					},
-					method: 'POST',
+				// uni.request({
+				// 	url: 'http://39.106.217.14:8000/api/quickcharge/pushmoney/',
+				// 	dataType: 'text',
+				// 	header: {
+				// 		'Authorization': this.token //把token提交到请求头
+				// 	},
+				// 	data: {
+				// 		//noncestr: Date.now()
+				// 		phone: this.phonenumber,
+				// 		money:this.pushMoney
+				// 	},
+				// 	method: 'POST',
+				// })
+				uniCloud.callFunction({
+				  name: 'rechangedemo_pushmoney',
+				  data: {
+				    phone: '12345678911',
+				    money: 5
+				  }
 				}).then(res => {
-					console.log('request success', res[1]);
-					//this.res =JSON.stringify(res[1]);
-					this.loading = false;
-					var data = JSON.parse(res[1].data)
-					this.totalMoney=data.data['money'];
-					console.log("totalMoney==" + data.data['money']);
+					// console.log('request success', res[1]);
+					// //this.res =JSON.stringify(res[1]);
+					// this.loading = false;
+					// var data = JSON.parse(res[1].data)
+					// this.totalMoney=data.data['money'];
+					// console.log("totalMoney==" + data.data['money']);
+					// uni.showModal({
+					// 	title: '充值成功',
+					// 	content:"余额为"+this.totalMoney,
+					// 	showCancel:false,
+					// 	success: function(res) {}
+					// });
 					uni.showModal({
-						title: '充值成功',
-						content:"余额为"+this.totalMoney,
-						showCancel:false,
-						success: function(res) {}
-					});
+					  content: res.result.msg,
+					  showCancel: false
+					})
+					console.log(res)
 				}).catch(err => {
-					console.log('request fail', err);
+					// console.log('request fail', err);
+					// uni.showModal({
+					// 	title: '充值失败',
+					// 	content:"错误信息为"+err.msg,
+					// 	showCancel:false,
+					// 	success: function(res) {}
+					// });
+					uni.hideLoading()
 					uni.showModal({
-						title: '充值失败',
-						content:"错误信息为"+err.msg,
-						showCancel:false,
-						success: function(res) {}
-					});
+					  content: `充值失败，错误信息为：${err.message}`,
+					  showCancel: false
+					})
+					console.error(err)
 					this.loading = false;
 				});
 				this.pushMoney='';//充值完成后清空充值金额
-				this.selfPushMoney='';充值完成后清空自定义金额
+				this.selfPushMoney='';//充值完成后清空自定义金额
 			}
 			
 		},
