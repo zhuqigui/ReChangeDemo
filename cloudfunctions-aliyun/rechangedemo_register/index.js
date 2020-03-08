@@ -249,7 +249,7 @@ var encryptPassword_1 = {
 const db = uniCloud.database();
 async function validateToken(token) {
 	const userFromToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-	const userInDB = await db.collection('user').where(userFromToken).get();
+	const userInDB = await db.collection('rechangedemo_user').where(userFromToken).get();
 	if (userInDB.data.length !== 1) {
 		return {
 			code: -1,
@@ -319,14 +319,14 @@ async function signUp(event) {
 		username
 	};
 
-	const userInDB = await db$1.collection('user').where(userInfo).get();
+	const userInDB = await db$1.collection('rechangedemo_user').where(userInfo).get();
 
 	let tokenSecret = crypto.randomBytes(16).toString('hex'),
 		token = jwtSimple.encode(userInfo, tokenSecret);
 
 	let userUpdateResult;
 	if (userInDB.data && userInDB.data.length === 0) {
-		userUpdateResult = await db$1.collection('user').add({
+		userUpdateResult = await db$1.collection('rechangedemo_user').add({
 			...userInfo,
 			password: encryptPassword$1(password),
 			tokenSecret,
@@ -412,7 +412,7 @@ async function signUpByAdmin(event) {
 		}
 		operator_username = validateResult.username;
 	} else {
-		const userCollection = db$1.collection('user');
+		const userCollection = db$1.collection('rechangedemo_user');
 		let checkOperatorResult = await userCollection.where({
 			username: operator_username
 		}).get();

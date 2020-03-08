@@ -20,7 +20,7 @@ exports.main = async (event, context) => {
  }
  //const collection = db.collection('wallet')
  //先查询出钱包余额
- const docList = await db.collection('wallet').where({
+ const docList = await db.collection('rechangedemo_wallet').where({
  	phone:phone
  }).get();
  console.log("docList=="+docList)
@@ -31,16 +31,17 @@ exports.main = async (event, context) => {
  //更新钱包信息，返回总金额
 var data={"phone":phone,"money":totalmoney }
  // await db.collection('wallet').add(event)
- const res = await db.collection('wallet').doc(docList.data[0]._id).update(data);
+ const res = await db.collection('rechangedemo_wallet').doc(docList.data[0]._id).update(data);
  if (res.updated === 1) {
    let result = Object.assign({}, {
      _id: docList.data[0]._id
    }, data)
    //console.log("集合第一条数据由${JSON.stringify(docList.data[0])}修改为${JSON.stringify(result)}...");
-   return {
-     status: 0,
-     msg: `充值成功，总金额为`+totalmoney
-   }
+   // return {
+   //   status: 0,
+   //   msg: `充值成功，总金额为`+totalmoney
+   // }
+   return totalmoney;
  } else {
    return {
      status: -1,
