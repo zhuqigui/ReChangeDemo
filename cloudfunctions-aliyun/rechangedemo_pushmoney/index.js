@@ -2,15 +2,15 @@
 const db = uniCloud.database()
 exports.main = async (event, context) => {
  //先查询用户是否存在
- const phone=event.phone;//"12345678911"//
- const pushmoney=event.money;//5;
+ const phone="15889428164";//event.phone;//"12345678911"//
+ const pushmoney=5;//event.money;//5;
  var totalmoney=0;
  //const phone="zhuqg";
  const userInDB = await db.collection('rechangedemo_user').where({
  	phone:phone
  }).get();
  //
- //console.log(userInDB)
+ console.log(userInDB)
  if (userInDB.data && userInDB.data.length === 0) {
 	 //console.log("用户名不存在，不能更新钱包...");
  	return {

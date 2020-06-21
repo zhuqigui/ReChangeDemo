@@ -242,93 +242,149 @@
 				});
 			},
 			btnCommit: function() {
-				if (this.result == null || this.result == '') {
-					uni.showModal({
-						title: '充电提示',
-						content: '请先扫码!',
-						showCancel: false
-					});
-					return;
-				}
-				if (this.hole_id == 0) {
-					uni.showModal({
-						title: '充电提示',
-						content: '请选择充电口!',
-						showCancel: false
-					});
-					return;
-				}
-				if(this.battery_type_value=='>'){
-					uni.showModal({
-						title: '充电提示',
-						content: '请选择充电电池类型!',
-						showCancel: false
-					});
-					return;
-				}
-				if (this.phonenumber == '' || this.token == '') {
-					uni.showModal({
-						title: '充电提示',
-						content: '请先登录',
-						showCancel: false
-					});
-					uni.redirectTo({
-						url: '../myRechange/userLogin/userLogin'
-					});
-					return;
-				}
-				if (this.charge_time == 0) {
-					uni.showModal({
-						title: '充电提示',
-						content: '请选择充电时间',
-						showCancel: false
-					});
-					return;
-				}
-				uni.request({
-						url: 'http://39.106.217.14:8000/api/charge/facility/order_submit/',
-						dataType: 'text',
-						header: {
-							Authorization: this.token //把token提交到请求头
-						},
-						data: {
-							facility_id: this.result, //
-							hole_id: this.hole_id,
-							phone: this.phonenumber,
-							money: this.spendMoney,
-							second: 10 //this.charge_time * 3600
-						},
-						method: 'POST'
-					})
-					.then(res => {
-						console.log('request success', res[1]);
-						//this.res =JSON.stringify(res[1]);
-						this.loading = false;
-						var data = JSON.parse(res[1].data);
-						this.batteryTypeList = data.data;
-						var code = data['code'];
-						console.log('code==' + code);
-						if (code == 1009) {
-							var errorMsg = data.data['errmsg'];
-							console.log('errorMsg==' + errorMsg);
-							uni.showModal({
-								title: '提交订单失败',
-								content: errorMsg,
-								showCancel: false,
-								success: function(res) {}
-							});
-							return;
-						}
-						// this.totalMoney=data.data['money'];
-						// console.log("data==" + data);
-						// for (var val in data.data) {
-						// 	console.log("data.data[val]['name']==" +data.data[val]['name']+",val=="+val);
-						// }
-					})
-					.catch(err => {
-						console.log('request fail', err);
-						this.loading = false;
-					});
+				// if (this.result == null || this.result == '') {
+				// 	uni.showModal({
+				// 		title: '充电提示',
+				// 		content: '请先扫码!',
+				// 		showCancel: false
+				// 	});
+				// 	return;
+				// }
+				// if (this.hole_id == 0) {
+				// 	uni.showModal({
+				// 		title: '充电提示',
+				// 		content: '请选择充电口!',
+				// 		showCancel: false
+				// 	});
+				// 	return;
+				// }
+				// if(this.battery_type_value=='>'){
+				// 	uni.showModal({
+				// 		title: '充电提示',
+				// 		content: '请选择充电电池类型!',
+				// 		showCancel: false
+				// 	});
+				// 	return;
+				// }
+				// if (this.phonenumber == '' || this.token == '') {
+				// 	uni.showModal({
+				// 		title: '充电提示',
+				// 		content: '请先登录',
+				// 		showCancel: false
+				// 	});
+				// 	uni.redirectTo({
+				// 		url: '../myRechange/userLogin/userLogin'
+				// 	});
+				// 	return;
+				// }
+				// if (this.charge_time == 0) {
+				// 	uni.showModal({
+				// 		title: '充电提示',
+				// 		content: '请选择充电时间',
+				// 		showCancel: false
+				// 	});
+				// 	return;
+				// }
+				// 调用云函数
+				   // wx.cloud.callFunction({
+				   //       name: 'order_submit',
+				   //       data: {
+				   //         facility_id : "111111",
+				   //         hole_id     :"2",
+				   //         phone       :"12345678901",
+				   //         money       :3,
+				   //         token       :"adfa"
+				   //       },
+				   //       success: res => {
+				   //         wx.showToast({
+				   //           title: '调用成功',
+				   //         })
+						 //   console.log("调用成功--"+JSON.stringify(res.result))
+				   //         // this.setData({
+				   //         //   result: JSON.stringify(res.result)
+				   //         // })
+				   //       },
+				   //       fail: err => {
+				   //         wx.showToast({
+				   //           icon: 'none',
+				   //           title: '调用失败',
+				   //         })
+				   //         console.error('[云函数] [sum] 调用失败：', err)
+				   //       }
+				   //     })
+					  uniCloud.callFunction({
+					        name: 'rechangedemo_commit_order',
+					        data: { 
+					    		facility_id : "111112",
+					    		hole_id     :"2",
+					    		//phone       :"12345678901",
+					    		second		:2,
+					    		money       :3,
+					    	}
+					  }).then((res) => {
+					    //uni.hideLoading()
+					    uni.showModal({
+					      content: `提交成功，获取数据列表为：${JSON.stringify(res.result.data)}`,
+					      showCancel: false
+					    })
+					    console.log(res)
+					  }).catch((err) => {
+					    //uni.hideLoading()
+					    uni.showModal({
+					      content: `提交失败，错误信息为：${err.message}`,
+					      showCancel: false
+					    })
+					    console.error(err)
+					  })
+				  //},
+				// uni.request({
+				// 		url: 'http://39.106.217.14:8000/api/charge/facility/order_submit/',
+				// 		url:'https://api.weixin.qq.com/tcb/invokecloudfunction',
+				// 		dataType: 'text',
+				// 		header: {
+				// 			Authorization: this.token,//把token提交到请求头
+				// 				//?access_token=ACCESS_TOKEN&env=ENV&name=FUNCTION_NAME
+				// 	env:'zqg-13oym',
+				// 	name:'order_submit'
+				// 		},
+				// 		data: {
+				// 			facility_id: this.result, //
+				// 			hole_id: this.hole_id,
+				// 			phone: this.phonenumber,
+				// 			money: this.spendMoney,
+				// 			second: 10 //this.charge_time * 3600
+				// 		},
+				// 		method: 'POST'
+				// 	})
+				// 	.then(res => {
+				// 		console.log('request res', res[1]);
+				// 		//this.res =JSON.stringify(res[1]);
+				// 		this.loading = false;
+				// 		var data = JSON.parse(res[1].data);
+				// 		this.batteryTypeList = data.data;
+				// 		var code = data['code'];
+				// 		console.log('code==' + code);
+				// 		if (code == 1009) {
+				// 			var errorMsg = data.data['errmsg'];
+				// 			console.log('errorMsg==' + errorMsg);
+				// 			uni.showModal({
+				// 				title: '提交订单失败',
+				// 				content: errorMsg,
+				// 				showCancel: false,
+				// 				success: function(res) {}
+				// 			});
+				// 			return;
+				// 		}
+				// 		// this.totalMoney=data.data['money'];
+				// 		// console.log("data==" + data);
+				// 		// for (var val in data.data) {
+				// 		// 	console.log("data.data[val]['name']==" +data.data[val]['name']+",val=="+val);
+				// 		// }
+				// 	})
+				// 	.catch(err => {
+				// 		console.log('request fail', err);
+				// 		this.loading = false;
+				// 	});
 				console.log('btnCommit....');
 				this.showSelected = true;
 				//计算应该花费的金额
@@ -350,8 +406,8 @@
 					success: function(res) {}
 				});
 				//提交完成后，再次申请更新充电口的状态
-				setTimeout(() => this.requestSlotStatus(), 
-				500);
+				// setTimeout(() => this.requestSlotStatus(), 
+				// 500);
 			},
 			requestSlotStatus:function(){
 				uni.request({
@@ -536,53 +592,51 @@
 			console.log("onShow this.phonenumber=="+this.phonenumber+',this.token=='+this.token);
 			if (this.phonenumber != '' || this.token != '') {
 				//向服务器请求余额状
-				uni.request({
-						url: 'http://39.106.217.14:8000/api/user/wallet/',
-						dataType: 'text',
-						header: {
-							Authorization: this.token //把token提交到请求头
-						},
-						data: {
-							//noncestr: Date.now()
-							phone: this.phonenumber
-							//token: this.token
-						},
-						method: 'GET'
-					})
-					.then(res => {
-						console.log('onShow request success', res[1]);
-						this.loading = false;
-						var data = JSON.parse(res[1].data);
-						this.totalMoney = data.data['money'];
-						console.log('onShow totalMoney==' + data.data['money']);
-					})
-					.catch(err => {
-						console.log('request fail', err);
-						uni.showModal({
-							content: err.errMsg,
-							showCancel: false
-						});
-						this.loading = false;
-					});
+				// uni.request({
+				// 		url: 'http://39.106.217.14:8000/api/user/wallet/',
+				// 		dataType: 'text',
+				// 		header: {
+				// 			Authorization: this.token //把token提交到请求头
+				// 		},
+				// 		data: {
+				// 			//noncestr: Date.now()
+				// 			phone: this.phonenumber
+				// 			//token: this.token
+				// 		},
+				// 		method: 'GET'
+				// 	})
+				// 	.then(res => {
+				// 		console.log('onShow request success', res[1]);
+				// 		this.loading = false;
+				// 		var data = JSON.parse(res[1].data);
+				// 		this.totalMoney = data.data['money'];
+				// 		console.log('onShow totalMoney==' + data.data['money']);
+				// 	})
+				// 	.catch(err => {
+				// 		console.log('request fail', err);
+				// 		uni.showModal({
+				// 			content: err.errMsg,
+				// 			showCancel: false
+				// 		});
+				// 		this.loading = false;
+				// 	});
 			}
 			//定时更新充电桩状态
-			setInterval(() =>this.requestSlotStatus(),10*1000);
+			//setInterval(() =>this.requestSlotStatus(),10*1000);
 		},
 		onLoad() {
+			//初始化微信云函数
+			//wx.cloud.init();
 			console.log("onLoad uni.getStorageSync('batteryTypeList')==" + uni.getStorageSync('batteryTypeList'));
 			if (uni.getStorageSync('batteryTypeList') == '') {
-				uni.request({
-						url: 'http://39.106.217.14:8000/api/charge/battery_type/',
-						dataType: 'text',
-						data: {
-							facility_id: this.result
-						},
-						method: 'GET'
-					})
-					.then(res => {
-						console.log('request success', res[1]);
+				console.log('onLoad callFunction rechangedemo_get_type_list...');
+				uniCloud.callFunction({
+					name:'rechangedemo_get_type_list'
+				}).then(res => {
+						//console.log('request success', res);
 						this.loading = false;
-						var data = JSON.parse(res[1].data);
+						var data = res.result.data;
+						//console.log('request success', data);
 						this.batteryTypeList = data.data;
 						uni.setStorageSync('batteryTypeList', this.batteryTypeList);
 					})
@@ -590,6 +644,25 @@
 						console.log('request fail', err);
 						this.loading = false;
 					});
+				// uni.request({
+				// 		url: 'http://39.106.217.14:8000/api/charge/battery_type/',
+				// 		dataType: 'text',
+				// 		data: {
+				// 			facility_id: this.result
+				// 		},
+				// 		method: 'GET'
+				// 	})
+				// 	.then(res => {
+				// 		console.log('request success', res[1]);
+				// 		this.loading = false;
+				// 		var data = JSON.parse(res[1].data);
+				// 		this.batteryTypeList = data.data;
+				// 		uni.setStorageSync('batteryTypeList', this.batteryTypeList);
+				// 	})
+				// 	.catch(err => {
+				// 		console.log('request fail', err);
+				// 		this.loading = false;
+				// 	});
 			} else {
 				this.batteryTypeList = uni.getStorageSync('batteryTypeList');
 			}
@@ -605,42 +678,57 @@
 			this.phonenumber = uni.getStorageSync('phone');
 			this.token = uni.getStorageSync('token');
 			console.log('this.phonenumber==' + this.phonenumber + ',this.token==' + this.token);
-			//向服务器请求余额状
-			uni.request({
-					url: 'http://39.106.217.14:8000/api/user/wallet/',
-					dataType: 'text',
-					header: {
-						Authorization: this.token //把token提交到请求头
-					},
-					data: {
-						//noncestr: Date.now()
-						phone: this.phonenumber
-						//token: this.token
-					},
-					method: 'GET'
-				})
-				.then(res => {
-					console.log('request success', res[1]);
-					// uni.showToast({
-					// 	title: '获取成功',
-					// 	icon: 'success',
-					// 	mask: true,
-					// 	duration: 2000
-					// });
-					//this.res =JSON.stringify(res[1]);
-					this.loading = false;
-					var data = JSON.parse(res[1].data);
-					this.totalMoney = data.data['money'];
-					console.log('totalMoney==' + data.data['money']);
+			//向服务器请求余额
+			uniCloud.callFunction({
+				name:'rechangedemo_get_total_money',
+				data: {
+				// 			//noncestr: Date.now()
+					phone:"12345678911" //this.phonenumber
+				// 			//token: this.token
+				}
+			}).then(res => {
+					this.totalMoney= res.result.money;
+					console.log('request success this.totalMoney==',this.totalMoney);
 				})
 				.catch(err => {
 					console.log('request fail', err);
-					uni.showModal({
-						content: err.errMsg,
-						showCancel: false
-					});
-					this.loading = false;
+					//this.loading = false;
 				});
+			// uni.request({
+			// 		url: 'http://39.106.217.14:8000/api/user/wallet/',
+			// 		dataType: 'text',
+			// 		header: {
+			// 			Authorization: this.token //把token提交到请求头
+			// 		},
+			// 		data: {
+			// 			//noncestr: Date.now()
+			// 			phone: this.phonenumber
+			// 			//token: this.token
+			// 		},
+			// 		method: 'GET'
+			// 	})
+			// 	.then(res => {
+			// 		console.log('request success', res[1]);
+			// 		// uni.showToast({
+			// 		// 	title: '获取成功',
+			// 		// 	icon: 'success',
+			// 		// 	mask: true,
+			// 		// 	duration: 2000
+			// 		// });
+			// 		//this.res =JSON.stringify(res[1]);
+			// 		this.loading = false;
+			// 		var data = JSON.parse(res[1].data);
+			// 		this.totalMoney = data.data['money'];
+			// 		console.log('totalMoney==' + data.data['money']);
+			// 	})
+			// 	.catch(err => {
+			// 		console.log('request fail', err);
+			// 		uni.showModal({
+			// 			content: err.errMsg,
+			// 			showCancel: false
+			// 		});
+			// 		this.loading = false;
+			// 	});
 		}
 	};
 </script>

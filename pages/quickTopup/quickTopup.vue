@@ -169,7 +169,7 @@
 				// 	complete: () => {}
 				// });
 				this.phonenumber = uni.getStorageSync("phone");
-				this.token = uni.getStorageSync("token");
+				//this.token = uni.getStorageSync("token");
 				//console.log("this.phonenumber==" + this.phonenumber + ",this.token==" + this.token);
 				// uni.request({
 				// 	url: 'http://39.106.217.14:8000/api/quickcharge/pushmoney/',
@@ -187,8 +187,8 @@
 				uniCloud.callFunction({
 				  name: 'rechangedemo_pushmoney',
 				  data: {
-				    phone: '12345678911',
-				    money: 5
+				    phone: this.phonenumber,
+				    money: this.pushMoney
 				  }
 				}).then(res => {
 					// console.log('request success', res[1]);

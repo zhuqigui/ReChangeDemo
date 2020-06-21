@@ -3,8 +3,8 @@
 		<!--手机号码-->
 		<view class="uni-flex uni-row" style="justify-content: space-between;">
 			<view class="head">手机号:</view>
-			<!--:value="username"-->
-			<input class="uni-input" maxlength="13" type="number" placeholder="请输入手机号" @input="onPhoneInput" v-model="username" />
+			<!--:value="phone"-->
+			<input class="uni-input" maxlength="13" type="number" placeholder="请输入手机号" @input="onPhoneInput" v-model="phone" />
 		</view>
 		<!--密码-->
 		<view class="uni-flex uni-row uni-list-cell" style="justify-content: space-between;">
@@ -31,7 +31,7 @@
 			return {
 				loading: false,
 				res: '',
-				username: '',
+				phone: '',
 				password: ''
 			}
 		},
@@ -39,19 +39,19 @@
 			 login: function() {
 				 
 				 	const {
-				 		username,
+				 		phone,
 				 		password
 				 	} = this
-				 	if (!username) {
+				 	if (!phone) {
 				 		uni.showModal({
-				 			content: '请填写手机号码',
+				 			content: '请输入手机号码',
 				 			showCancel: false
 				 		})
 				 		return
 				 	}
 				 	if (!password) {
 				 		uni.showModal({
-				 			content: '请填写手机号码',
+				 			content: '请输入密码',
 				 			showCancel: false
 				 		})
 				 		return
@@ -59,33 +59,46 @@
 				 	uni.showLoading({
 				 		title: '登录中...'
 				 	})
-				 	this.$cloud.callFunction({
+					console.log("phone=="+phone+",password=="+password);
+				 	uniCloud.callFunction({
 				 		name: 'rechangedemo_login',
 				 		data: {
-				 			username,
+				 			phone,
 				 			password,
 				 		}
-				 	}).then((res) => {
+				 	}).then(res => {
 				 		uni.hideLoading()
-				 		if (res.result.token) {
-				 			uni.showToast({
-				 				title: '登录成功',
-				 				icon: 'none'
-				 			})
-				 			uni.setStorageSync('token', res.result.token)
-				 			uni.setStorageSync('username', res.result.username)
-				 			uni.switchTab({
-				 				url: '/pages/tabbar/member'
-				 			})
-				 		} else {
-				 			return Promise.reject(new Error(res.result.msg))
-				 		}
-				 	}).catch((err) => {
+						if (res.result.code==0) {
+							uni.showToast({
+								title: '登录成功',
+								icon: 'none'
+							})
+							uni.setStorageSync('phone', phone)
+							console.log("uni.redirectTo rechange phone=="+phone);
+							this.gotoRechange();
+						}
+							//this.gotoRechange();
+				 		// if (res.result.token) {
+				 		// 	uni.showToast({
+				 		// 		title: '登录成功',
+				 		// 		icon: 'none'
+				 		// 	})
+				 		// 	uni.setStorageSync('token', res.result.token)
+				 		// 	uni.setStorageSync('phone', res.result.phone)
+				 		// 	uni.switchTab({
+				 		// 		url: '/pages/tabbar/member'
+				 		// 	})
+				 		// } else {
+				 		// 	return Promise.reject(new Error(res.result.msg))
+				 		// }
+				 	}).catch(err => {
 				 		uni.hideLoading()
 				 		uni.showModal({
 				 			content: err.message || '登录失败',
 				 			showCancel: false
-				 		})
+				 		});
+						// this.phone='';
+						// this.password='';
 				 	})
 				 
 			// 	console.log("this.phonenumber==" + this.phonenumber + ",this.password==" + this.password);
@@ -153,7 +166,7 @@
 			// 			showCancel: false
 			// 		});
 			// 		this.loading = false;
-			// 	});
+			 	//});
 			 },
 			onPhoneInput: function(event) {
 				this.phonenumber = event.target.value
